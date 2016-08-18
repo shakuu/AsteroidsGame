@@ -16,6 +16,9 @@ export class shapesFactory implements interfaceFactory {
             case 'basicAttack':
                 newShape = createBasicAttackShape();
                 break;
+            case 'largeAsteroid':
+                newShape = CreateLargeAsteroidTypeOne();
+                break;
         }
 
         return newShape;
@@ -23,13 +26,25 @@ export class shapesFactory implements interfaceFactory {
 }
 
 function CreateLargeAsteroidTypeOne() {
+    // 160x160
     var newShape = new Kinetic.Line({
-        x: 0,
-        y: 0,
-        points: [10, 0, 20, 40, 0, 40, 10, 0],
+        x: 200,
+        y: 200,
+        points: [
+            40, 0,
+            80, 0,
+            160, 20,
+            160, 80,
+            40, 160,
+            0, 120,
+            0, 40,
+            40, 0
+        ],
+        // width: 160,
+        // height: 160,
         stroke: 'yellowgreen',
         fill: 'yellowgreen',
-        offset: { x: 10, y: 20 }
+        offset: { x: 80, y: 80 }
     });
 
     return newShape;
@@ -40,6 +55,8 @@ function createShipShape(): Kinetic.IShape {
         x: 470,
         y: 250,
         points: [10, 0, 20, 40, 0, 40, 10, 0],
+        // width: 20,
+        // height: 40,
         stroke: 'yellowgreen',
         fill: 'yellowgreen',
         offset: { x: 10, y: 20 }

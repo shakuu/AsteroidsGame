@@ -9,6 +9,9 @@ import {basicAttack, attack} from '../models/ship-attacks';
 export interface gameCommands {
     createShip: string;
     createBasicAttack: string;
+    createLargeAsteroid: string;
+    createMediumAsteroid: string;
+    createSmallAsteroid: string;
 }
 
 export class asteroidsGameCommands implements gameCommands {
@@ -55,7 +58,26 @@ export class asteroidsGame {
     public Start() {
         this.player.Ship.position =
             this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
+
+        this.createNewAsteroid(this.commands.createLargeAsteroid);
+
         window.requestAnimationFrame(this.run);
+    }
+
+    private createNewAsteroid(type: string) {
+        var newAsteroid = this.factory.createObject(this.commands.createLargeAsteroid);
+        newAsteroid.position =
+            this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, this.asteroidsLayerId);
+
+        var angle = this.getRandomInt(0, 360);
+        var delta = newAsteroid.getForwardMotionDelta(angle);
+        newAsteroid.createForwardMotion(delta);
+
+        this.asteroids.push(newAsteroid as asteroid);
+    }
+
+    private getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     public run = (timestamp) => {
@@ -91,6 +113,7 @@ export class asteroidsGame {
 
         // Move/ Rotate
         this.applyPlayerShipMovement();
+        this.applyAsteroidsMovement();
         this.applyShotsMovement();
     }
 
@@ -116,6 +139,16 @@ export class asteroidsGame {
         if (this.controls.shoot && this.shipCanShoot) {
             this.shipLastShotTimestamp = this.currentTimestamp;
             this.createNewShot();
+        }
+    }
+
+    private applyAsteroidsMovement() {
+        for (var i = 0; i < this.asteroids.length; i += 1) {
+            var current = this.asteroids[i];
+
+            current.applyForwardMotion();
+            current.currentYawAngleInDegrees = this.engine.rotateShape(current.objectId, current.yawSpeed);
+            this.engine.moveShape(current.objectId, current.position);
         }
     }
 

@@ -285,6 +285,7 @@
 	    __extends(largeAsteroid, _super);
 	    function largeAsteroid(id) {
 	        _super.call(this, id, 3, 20, 'largeAsteroid');
+	        this.maximumForwardSpeed = 0.1;
 	        this.yawSpeed = 1;
 	    }
 	    return largeAsteroid;
@@ -294,6 +295,7 @@
 	    __extends(mediumAsteroid, _super);
 	    function mediumAsteroid(id) {
 	        _super.call(this, id, 2, 50, 'mediumAsteroid');
+	        this.maximumForwardSpeed = 0.25;
 	        this.yawSpeed = 1;
 	    }
 	    return mediumAsteroid;
@@ -303,6 +305,7 @@
 	    __extends(smallAsteroid, _super);
 	    function smallAsteroid(id) {
 	        _super.call(this, id, 1, 100, 'smallAsteroid');
+	        this.maximumForwardSpeed = 0.5;
 	        this.yawSpeed = 1;
 	    }
 	    return smallAsteroid;
@@ -522,6 +525,9 @@
 	            case 'basicAttack':
 	                newShape = createBasicAttackShape();
 	                break;
+	            case 'largeAsteroid':
+	                newShape = CreateLargeAsteroidTypeOne();
+	                break;
 	        }
 	        return newShape;
 	    };
@@ -529,13 +535,25 @@
 	}());
 	exports.shapesFactory = shapesFactory;
 	function CreateLargeAsteroidTypeOne() {
+	    // 160x160
 	    var newShape = new Kinetic.Line({
-	        x: 0,
-	        y: 0,
-	        points: [10, 0, 20, 40, 0, 40, 10, 0],
+	        x: 200,
+	        y: 200,
+	        points: [
+	            40, 0,
+	            80, 0,
+	            160, 20,
+	            160, 80,
+	            40, 160,
+	            0, 120,
+	            0, 40,
+	            40, 0
+	        ],
+	        // width: 160,
+	        // height: 160,
 	        stroke: 'yellowgreen',
 	        fill: 'yellowgreen',
-	        offset: { x: 10, y: 20 }
+	        offset: { x: 80, y: 80 }
 	    });
 	    return newShape;
 	}
@@ -544,6 +562,8 @@
 	        x: 470,
 	        y: 250,
 	        points: [10, 0, 20, 40, 0, 40, 10, 0],
+	        // width: 20,
+	        // height: 40,
 	        stroke: 'yellowgreen',
 	        fill: 'yellowgreen',
 	        offset: { x: 10, y: 20 }
@@ -629,7 +649,20 @@
 	    asteroidsGame.prototype.Start = function () {
 	        this.player.Ship.position =
 	            this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
+	        this.createNewAsteroid(this.commands.createLargeAsteroid);
 	        window.requestAnimationFrame(this.run);
+	    };
+	    asteroidsGame.prototype.createNewAsteroid = function (type) {
+	        var newAsteroid = this.factory.createObject(this.commands.createLargeAsteroid);
+	        newAsteroid.position =
+	            this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, this.asteroidsLayerId);
+	        var angle = this.getRandomInt(0, 360);
+	        var delta = newAsteroid.getForwardMotionDelta(angle);
+	        newAsteroid.createForwardMotion(delta);
+	        this.asteroids.push(newAsteroid);
+	    };
+	    asteroidsGame.prototype.getRandomInt = function (min, max) {
+	        return Math.floor(Math.random() * (max - min + 1)) + min;
 	    };
 	    asteroidsGame.prototype.gameLogic = function () {
 	        // Decelerate
@@ -638,6 +671,7 @@
 	        this.handleUserInput();
 	        // Move/ Rotate
 	        this.applyPlayerShipMovement();
+	        this.applyAsteroidsMovement();
 	        this.applyShotsMovement();
 	    };
 	    asteroidsGame.prototype.deceleratePlayerShip = function () {
@@ -658,6 +692,14 @@
 	        if (this.controls.shoot && this.shipCanShoot) {
 	            this.shipLastShotTimestamp = this.currentTimestamp;
 	            this.createNewShot();
+	        }
+	    };
+	    asteroidsGame.prototype.applyAsteroidsMovement = function () {
+	        for (var i = 0; i < this.asteroids.length; i += 1) {
+	            var current = this.asteroids[i];
+	            current.applyForwardMotion();
+	            current.currentYawAngleInDegrees = this.engine.rotateShape(current.objectId, current.yawSpeed);
+	            this.engine.moveShape(current.objectId, current.position);
 	        }
 	    };
 	    asteroidsGame.prototype.applyPlayerShipMovement = function () {
