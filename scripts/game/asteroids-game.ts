@@ -4,7 +4,7 @@ import {objectFactory} from '../shapes-factory/objects-factory';
 import {asteroid} from '../models/asteroids';
 import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
-import {basicAttack, shipAttack} from '../models/ship-attacks';
+import {basicAttack, attack} from '../models/ship-attacks';
 
 export interface gameCommands {
     createShip: string;
@@ -25,7 +25,7 @@ export class asteroidsGame {
 
     private player: player;
     private asteroids: asteroid[] = [];
-    private shots: shipAttack[] = [];
+    private shots: attack[] = [];
 
     private shipLayerId = 0;
     private asteroidsLayerId = 1;
@@ -88,6 +88,7 @@ export class asteroidsGame {
 
         // Move/ Rotate
         this.applyPlayerShipMovement();
+        this.applyShotsMovement();
     }
 
     private deceleratePlayerShip() {
@@ -121,6 +122,18 @@ export class asteroidsGame {
 
         this.player.Ship.applyForwarMotions();
         this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
+    }
+
+    private applyShotsMovement() {
+        for (var i = 0; i < this.shots.length; i += 1) {
+            this.shots[i].applyForwarMotion();
+            var isOutOfBounds = this.engine.moveShot(this.shots[i].objectId, this.shots[i].position);
+
+            if (isOutOfBounds) {
+                this.shots.splice(i, 1);
+                i -= 1;
+            }
+        }
     }
 
     private createNewShot() {

@@ -5,15 +5,12 @@ export interface shipAttack {
     applyForwarMotion();
 }
 
-export class basicAttack extends spaceObject implements shipAttack {
+export class attack extends spaceObject implements shipAttack {
 
     private forwardMotion: forwardMotion;
 
-    constructor(id: number) {
+    constructor(id: number, type: string) {
         super(id, 'basicAttack');
-
-        this.maximumForwardSpeed = 0.022;
-
     }
 
     createForwarMotion(forwardMotionToAdd: forwardMotion) {
@@ -28,5 +25,13 @@ export class basicAttack extends spaceObject implements shipAttack {
         currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
 
         this.position = currentPosition;
+    }
+}
+
+export class basicAttack extends attack {
+    constructor(id: number) {
+        super(id, 'basicAttack')
+
+        this.maximumForwardSpeed = 0.222;
     }
 }

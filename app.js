@@ -66,10 +66,10 @@
 	"use strict";
 	var engine_1 = __webpack_require__(2);
 	var objects_factory_1 = __webpack_require__(3);
-	var player_1 = __webpack_require__(6);
-	var shapes_factory_1 = __webpack_require__(7);
-	var asteroids_game_1 = __webpack_require__(8);
-	var controls_1 = __webpack_require__(9);
+	var player_1 = __webpack_require__(7);
+	var shapes_factory_1 = __webpack_require__(8);
+	var asteroids_game_1 = __webpack_require__(9);
+	var controls_1 = __webpack_require__(10);
 	function createGame() {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
@@ -154,7 +154,18 @@
 	        shapeToMove.setPosition({ x: position.x, y: position.y });
 	    };
 	    kineticGraphicsEngine.prototype.moveShot = function (id, position) {
-	        var outOfBounds;
+	        var outOfBounds, shotToMove = this.shapes[id], shapeSize = shotToMove.getSize();
+	        outOfBounds = this.checkLeft(position.x, shapeSize.width) ||
+	            this.checkRight(position.x, shapeSize.width) ||
+	            this.checkTop(position.y, shapeSize.height) ||
+	            this.checkBot(position.y, shapeSize.height);
+	        if (outOfBounds) {
+	            shotToMove.remove();
+	            this.shapes[id] = null;
+	        }
+	        else {
+	            shotToMove.setPosition({ x: position.x, y: position.y });
+	        }
 	        return outOfBounds;
 	    };
 	    kineticGraphicsEngine.prototype.checkLeft = function (x, width) {
@@ -197,7 +208,7 @@
 
 	"use strict";
 	var space_ship_1 = __webpack_require__(4);
-	var ship_attacks_1 = __webpack_require__(12);
+	var ship_attacks_1 = __webpack_require__(6);
 	var objectFactory = (function () {
 	    function objectFactory() {
 	        this.currentId = 0;
@@ -342,6 +353,46 @@
 
 /***/ },
 /* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var space_object_1 = __webpack_require__(5);
+	var attack = (function (_super) {
+	    __extends(attack, _super);
+	    function attack(id, type) {
+	        _super.call(this, id, 'basicAttack');
+	    }
+	    attack.prototype.createForwarMotion = function (forwardMotionToAdd) {
+	        forwardMotionToAdd.speed = this.maximumForwardSpeed;
+	        this.forwardMotion = forwardMotionToAdd;
+	    };
+	    attack.prototype.applyForwarMotion = function () {
+	        var currentPosition = this.position;
+	        currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;
+	        currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
+	        this.position = currentPosition;
+	    };
+	    return attack;
+	}(space_object_1.spaceObject));
+	exports.attack = attack;
+	var basicAttack = (function (_super) {
+	    __extends(basicAttack, _super);
+	    function basicAttack(id) {
+	        _super.call(this, id, 'basicAttack');
+	        this.maximumForwardSpeed = 0.222;
+	    }
+	    return basicAttack;
+	}(attack));
+	exports.basicAttack = basicAttack;
+
+
+/***/ },
+/* 7 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -378,7 +429,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -428,7 +479,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -496,6 +547,7 @@
 	        this.handleUserInput();
 	        // Move/ Rotate
 	        this.applyPlayerShipMovement();
+	        this.applyShotsMovement();
 	    };
 	    asteroidsGame.prototype.deceleratePlayerShip = function () {
 	        this.player.Ship.decelerateYawSpeed();
@@ -523,6 +575,16 @@
 	        this.player.Ship.applyForwarMotions();
 	        this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
 	    };
+	    asteroidsGame.prototype.applyShotsMovement = function () {
+	        for (var i = 0; i < this.shots.length; i += 1) {
+	            this.shots[i].applyForwarMotion();
+	            var isOutOfBounds = this.engine.moveShot(this.shots[i].objectId, this.shots[i].position);
+	            if (isOutOfBounds) {
+	                this.shots.splice(i, 1);
+	                i -= 1;
+	            }
+	        }
+	    };
 	    asteroidsGame.prototype.createNewShot = function () {
 	        var newShot = this.factory.createObject(this.commands.createBasicAttack);
 	        var forwardMotion = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
@@ -539,7 +601,7 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -584,40 +646,6 @@
 	    return keyboardControls;
 	}());
 	exports.keyboardControls = keyboardControls;
-
-
-/***/ },
-/* 10 */,
-/* 11 */,
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var space_object_1 = __webpack_require__(5);
-	var basicAttack = (function (_super) {
-	    __extends(basicAttack, _super);
-	    function basicAttack(id) {
-	        _super.call(this, id, 'basicAttack');
-	        this.maximumForwardSpeed = 0.022;
-	    }
-	    basicAttack.prototype.createForwarMotion = function (forwardMotionToAdd) {
-	        forwardMotionToAdd.speed = this.maximumForwardSpeed;
-	        this.forwardMotion = forwardMotionToAdd;
-	    };
-	    basicAttack.prototype.applyForwarMotion = function () {
-	        var currentPosition = this.position;
-	        currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;
-	        currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
-	        this.position = currentPosition;
-	    };
-	    return basicAttack;
-	}(space_object_1.spaceObject));
-	exports.basicAttack = basicAttack;
 
 
 /***/ }

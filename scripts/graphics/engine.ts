@@ -50,7 +50,7 @@ export class kineticGraphicsEngine implements graphics {
             position: canvasPosition;
         this.layers[layerId].add(newShape);
         this.shapes[id] = newShape;
-        
+
         position = newShape.getPosition();
         return position;
     }
@@ -94,7 +94,21 @@ export class kineticGraphicsEngine implements graphics {
     }
 
     public moveShot(id: number, position: canvasPosition) {
-        var outOfBounds: boolean;
+        var outOfBounds: boolean,
+            shotToMove = this.shapes[id],
+            shapeSize = shotToMove.getSize();
+
+        outOfBounds = this.checkLeft(position.x, shapeSize.width) ||
+            this.checkRight(position.x, shapeSize.width) ||
+            this.checkTop(position.y, shapeSize.height) ||
+            this.checkBot(position.y, shapeSize.height);
+
+        if (outOfBounds) {
+            shotToMove.remove();
+            this.shapes[id] = null;
+        } else {
+            shotToMove.setPosition({ x: position.x, y: position.y });
+        }
 
         return outOfBounds;
     }
