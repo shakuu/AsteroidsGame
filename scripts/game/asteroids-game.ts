@@ -6,12 +6,18 @@ import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
 
 export class asteroidsGame {
-    public engine: graphics;
-    private player: player;
+    private engine: graphics;
     private factory: objectFactory;
-    public controls: IControls;
+    private controls: IControls;
+
+    private player: player;
+    private asteroids: asteroid[];
+    private shots;
 
     private shipLayerId = 0;
+    private asteroidsLayerId = 1;
+
+    private start: number = null;
 
     constructor(engine: graphics, player: player, controls: IControls, factory: objectFactory) {
         this.engine = engine;
@@ -26,17 +32,48 @@ export class asteroidsGame {
 
     public Start() {
         this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
-        console.log(this.controls);
-        debugger;
         window.requestAnimationFrame(this.run);
     }
 
-    public run = () => {
-        this.engine.nextFrame();
-        console.log(this.Controls);
-        window.requestAnimationFrame(this.run);
+    public run = (timestamp) => {
+
+        if (!this.start) {
+            this.start = timestamp;
+        }
+
+        this.gameLogic();
+        if (timestamp - this.start > 1000 / 30) {
+            this.start = null;
+            this.engine.nextFrame();
+            // DELETE ThIS
+            // console.log(this.Controls);
+        }
+
+        if (!this.controls.pause) {
+            window.requestAnimationFrame(this.run);
+        }
     }
 
     private gameLogic() {
+        // Decelerate
+        this.deceleratePlayerShip();
+
+        // Read Controls and Accelerate
+        if (this.controls.rotateLeft) {
+            this.player.Ship.decreaseYawSpeed();
+        }
+
+        if (this.controls.rotateRight) {
+            this.player.Ship.increseYawSpeed();
+        }
+
+        // Apply Rotation
+        this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed)
+
+        // Apply Forward movement
+    }
+
+    private deceleratePlayerShip() {
+        this.player.Ship.decelerateYawSpeed();
     }
 }

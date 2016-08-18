@@ -19,15 +19,13 @@ export class shapesFactory implements interfaceFactory {
 }
 
 function createShipShape(): Kinetic.IShape {
-    var newShape = new Kinetic.RegularPolygon({
+    var newShape = new Kinetic.Line({
         x: 100,
         y: 100,
-        width: 40,
-        height: 40,
-        sides: 3,
-        radius: 70,
-        stroke: 'black',
-        fill: 'black'
+        points: [10, 0, 20, 40, 0, 40, 10, 0],
+        stroke: 'yellowgreen',
+        fill: 'yellowgreen',
+        offset: { x: 10, y: 20 }
     });
     return newShape;
 }

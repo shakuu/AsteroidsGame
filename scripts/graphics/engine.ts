@@ -7,7 +7,7 @@ interface stageOptions {
     height: number;
 }
 
-class kineticGraphicsEngine implements graphics {
+export class kineticGraphicsEngine implements graphics {
     private stage: Kinetic.IStage;
     private layers: Kinetic.ILayer[] = [];
     private shapes: Kinetic.IShape[] = [];
@@ -53,7 +53,7 @@ class kineticGraphicsEngine implements graphics {
     }
 
     public rotateShape(id: number, degree: number) {
-
+        this.shapes[id].rotate(degree);
     }
 
     public moveShape(id: number, speed: number, x: number, y: number) {
@@ -66,5 +66,3 @@ class kineticGraphicsEngine implements graphics {
         }
     }
 }
-
-export {kineticGraphicsEngine};

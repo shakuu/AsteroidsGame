@@ -49,9 +49,11 @@
 	var asteroids = create_game_1.createGame();
 	exports.asteroids = asteroids;
 	document.onkeydown = function (event) {
+	    event.preventDefault();
 	    asteroids.Controls.evaluateKeyDown(event.keyCode);
 	};
 	document.onkeyup = function (event) {
+	    event.preventDefault();
 	    asteroids.Controls.evaluateKeyUp(event.keyCode);
 	};
 	asteroids.Start();
@@ -126,6 +128,7 @@
 	    kineticGraphicsEngine.prototype.destroyShape = function (id) {
 	    };
 	    kineticGraphicsEngine.prototype.rotateShape = function (id, degree) {
+	        this.shapes[id].rotate(degree);
 	    };
 	    kineticGraphicsEngine.prototype.moveShape = function (id, speed, x, y) {
 	    };
@@ -181,12 +184,39 @@
 	    __extends(spaceShip, _super);
 	    function spaceShip(id) {
 	        _super.call(this, id, 'ship');
+	        // TODO: 
+	        this.yawAcceleration = 0.05;
+	        this.yawDeceleration = 0.01;
+	        this.setStats();
 	    }
+	    spaceShip.prototype.setStats = function () {
+	        this.maximumYawSpeed = 5;
+	    };
 	    spaceShip.prototype.increseYawSpeed = function () {
 	        this.yawSpeed += this.yawAcceleration;
+	        if (this.yawSpeed > this.maximumYawSpeed) {
+	            this.yawSpeed = this.maximumYawSpeed;
+	        }
 	    };
 	    spaceShip.prototype.decreaseYawSpeed = function () {
-	        this.yawSpeed -= this.yawDeceleration;
+	        this.yawSpeed -= this.yawAcceleration;
+	        if (this.yawSpeed < -this.maximumYawSpeed) {
+	            this.yawSpeed = -this.maximumYawSpeed;
+	        }
+	    };
+	    spaceShip.prototype.decelerateYawSpeed = function () {
+	        if (this.yawSpeed < 0) {
+	            this.yawSpeed += this.yawDeceleration;
+	            if (this.yawSpeed > 0) {
+	                this.yawSpeed = 0;
+	            }
+	        }
+	        else if (this.yawSpeed > 0) {
+	            this.yawSpeed -= this.yawDeceleration;
+	            if (this.yawSpeed < 0) {
+	                this.yawSpeed = 0;
+	            }
+	        }
 	    };
 	    return spaceShip;
 	}(space_object_1.spaceObject));
@@ -268,15 +298,13 @@
 	}());
 	exports.shapesFactory = shapesFactory;
 	function createShipShape() {
-	    var newShape = new Kinetic.RegularPolygon({
+	    var newShape = new Kinetic.Line({
 	        x: 100,
 	        y: 100,
-	        width: 40,
-	        height: 40,
-	        sides: 3,
-	        radius: 70,
-	        stroke: 'black',
-	        fill: 'black'
+	        points: [10, 0, 20, 40, 0, 40, 10, 0],
+	        stroke: 'yellowgreen',
+	        fill: 'yellowgreen',
+	        offset: { x: 10, y: 20 }
 	    });
 	    return newShape;
 	}
@@ -291,10 +319,20 @@
 	    function asteroidsGame(engine, player, controls, factory) {
 	        var _this = this;
 	        this.shipLayerId = 0;
-	        this.run = function () {
-	            _this.engine.nextFrame();
-	            console.log(_this.Controls);
-	            window.requestAnimationFrame(_this.run);
+	        this.asteroidsLayerId = 1;
+	        this.start = null;
+	        this.run = function (timestamp) {
+	            if (!_this.start) {
+	                _this.start = timestamp;
+	            }
+	            _this.gameLogic();
+	            if (timestamp - _this.start > 1000 / 30) {
+	                _this.start = null;
+	                _this.engine.nextFrame();
+	            }
+	            if (!_this.controls.pause) {
+	                window.requestAnimationFrame(_this.run);
+	            }
 	        };
 	        this.engine = engine;
 	        this.player = player;
@@ -310,11 +348,24 @@
 	    });
 	    asteroidsGame.prototype.Start = function () {
 	        this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
-	        console.log(this.controls);
-	        debugger;
 	        window.requestAnimationFrame(this.run);
 	    };
 	    asteroidsGame.prototype.gameLogic = function () {
+	        // Decelerate
+	        this.deceleratePlayerShip();
+	        // Read Controls and Accelerate
+	        if (this.controls.rotateLeft) {
+	            this.player.Ship.decreaseYawSpeed();
+	        }
+	        if (this.controls.rotateRight) {
+	            this.player.Ship.increseYawSpeed();
+	        }
+	        // Apply Rotation
+	        this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed);
+	        // Apply Forward movement
+	    };
+	    asteroidsGame.prototype.deceleratePlayerShip = function () {
+	        this.player.Ship.decelerateYawSpeed();
 	    };
 	    return asteroidsGame;
 	}());
