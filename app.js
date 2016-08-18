@@ -47,6 +47,7 @@
 	"use strict";
 	var create_game_1 = __webpack_require__(1);
 	var asteroids = create_game_1.createGame();
+	exports.asteroids = asteroids;
 	document.onkeydown = function (event) {
 	    asteroids.Controls.evaluateKeyDown(event.keyCode);
 	};
@@ -199,6 +200,9 @@
 	"use strict";
 	var spaceObject = (function () {
 	    function spaceObject(id, type) {
+	        this.minimumSpeed = 0;
+	        this.yawSpeed = 0;
+	        this.forwardSpeed = 0;
 	        this.objectId = id;
 	        this.type = type;
 	    }
@@ -256,22 +260,26 @@
 	        var newShape;
 	        switch (type) {
 	            case 'ship':
-	                newShape = new Kinetic.RegularPolygon({
-	                    x: 100,
-	                    y: 100,
-	                    width: 40,
-	                    height: 40,
-	                    sides: 3,
-	                    radius: 70,
-	                    stroke: 'black',
-	                    fill: 'black'
-	                });
+	                newShape = createShipShape();
 	        }
 	        return newShape;
 	    };
 	    return shapesFactory;
 	}());
 	exports.shapesFactory = shapesFactory;
+	function createShipShape() {
+	    var newShape = new Kinetic.RegularPolygon({
+	        x: 100,
+	        y: 100,
+	        width: 40,
+	        height: 40,
+	        sides: 3,
+	        radius: 70,
+	        stroke: 'black',
+	        fill: 'black'
+	    });
+	    return newShape;
+	}
 
 
 /***/ },
@@ -281,7 +289,13 @@
 	"use strict";
 	var asteroidsGame = (function () {
 	    function asteroidsGame(engine, player, controls, factory) {
+	        var _this = this;
 	        this.shipLayerId = 0;
+	        this.run = function () {
+	            _this.engine.nextFrame();
+	            console.log(_this.Controls);
+	            window.requestAnimationFrame(_this.run);
+	        };
 	        this.engine = engine;
 	        this.player = player;
 	        this.factory = factory;
@@ -297,7 +311,10 @@
 	    asteroidsGame.prototype.Start = function () {
 	        this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
 	        console.log(this.controls);
-	        this.engine.nextFrame();
+	        debugger;
+	        window.requestAnimationFrame(this.run);
+	    };
+	    asteroidsGame.prototype.gameLogic = function () {
 	    };
 	    return asteroidsGame;
 	}());

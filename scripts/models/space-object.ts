@@ -1,10 +1,10 @@
 class spaceObject {
-    minimumSpeed: number;
+    minimumSpeed: number = 0;
 
-    yawSpeed: number;
+    yawSpeed: number = 0;
     maximumYawSpeed: number;
 
-    forwardSpeed: number;
+    forwardSpeed: number = 0;
     maximumForwardSpeed: number;
 
     objectId: number;

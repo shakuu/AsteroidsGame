@@ -6,10 +6,10 @@ import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
 
 export class asteroidsGame {
-    private engine: graphics;
+    public engine: graphics;
     private player: player;
     private factory: objectFactory;
-    private controls: IControls;
+    public controls: IControls;
 
     private shipLayerId = 0;
 
@@ -27,6 +27,16 @@ export class asteroidsGame {
     public Start() {
         this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
         console.log(this.controls);
+        debugger;
+        window.requestAnimationFrame(this.run);
+    }
+
+    public run = () => {
         this.engine.nextFrame();
+        console.log(this.Controls);
+        window.requestAnimationFrame(this.run);
+    }
+
+    private gameLogic() {
     }
 }

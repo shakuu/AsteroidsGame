@@ -11,18 +11,23 @@ export class shapesFactory implements interfaceFactory {
 
         switch (type) {
             case 'ship':
-                newShape = new Kinetic.RegularPolygon({
-                    x: 100,
-                    y: 100,
-                    width: 40,
-                    height: 40,
-                    sides: 3,
-                    radius: 70,
-                    stroke: 'black',
-                    fill: 'black'
-                })
+                newShape = createShipShape();
         }
 
         return newShape;
     }
+}
+
+function createShipShape(): Kinetic.IShape {
+    var newShape = new Kinetic.RegularPolygon({
+        x: 100,
+        y: 100,
+        width: 40,
+        height: 40,
+        sides: 3,
+        radius: 70,
+        stroke: 'black',
+        fill: 'black'
+    });
+    return newShape;
 }

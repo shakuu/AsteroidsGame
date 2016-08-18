@@ -11,3 +11,5 @@ document.onkeyup = function (event) {
 }
 
 asteroids.Start();
+
+export {asteroids};
