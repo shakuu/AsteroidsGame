@@ -367,11 +367,11 @@
 	    function attack(id, type) {
 	        _super.call(this, id, 'basicAttack');
 	    }
-	    attack.prototype.createForwarMotion = function (forwardMotionToAdd) {
+	    attack.prototype.createForwardMotion = function (forwardMotionToAdd) {
 	        forwardMotionToAdd.speed = this.maximumForwardSpeed;
 	        this.forwardMotion = forwardMotionToAdd;
 	    };
-	    attack.prototype.applyForwarMotion = function () {
+	    attack.prototype.applyForwardMotion = function () {
 	        var currentPosition = this.position;
 	        currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;
 	        currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
@@ -577,7 +577,7 @@
 	    };
 	    asteroidsGame.prototype.applyShotsMovement = function () {
 	        for (var i = 0; i < this.shots.length; i += 1) {
-	            this.shots[i].applyForwarMotion();
+	            this.shots[i].applyForwardMotion();
 	            var isOutOfBounds = this.engine.moveShot(this.shots[i].objectId, this.shots[i].position);
 	            if (isOutOfBounds) {
 	                this.shots.splice(i, 1);
@@ -593,7 +593,7 @@
 	        newShot.position.x = this.player.Ship.position.x + forwardMotion.deltaX;
 	        newShot.position.y = this.player.Ship.position.y + forwardMotion.deltaY;
 	        this.engine.moveShape(newShot.objectId, newShot.position);
-	        newShot.createForwarMotion(forwardMotion);
+	        newShot.createForwardMotion(forwardMotion);
 	    };
 	    return asteroidsGame;
 	}());

@@ -1,11 +1,6 @@
 import {spaceObject, forwardMotion} from './space-object';
 
-export interface shipAttack {
-    createForwarMotion(forwardMotionToAdd: forwardMotion);
-    applyForwarMotion();
-}
-
-export class attack extends spaceObject implements shipAttack {
+export class attack extends spaceObject {
 
     private forwardMotion: forwardMotion;
 
@@ -13,12 +8,12 @@ export class attack extends spaceObject implements shipAttack {
         super(id, 'basicAttack');
     }
 
-    createForwarMotion(forwardMotionToAdd: forwardMotion) {
+    createForwardMotion(forwardMotionToAdd: forwardMotion) {
         forwardMotionToAdd.speed = this.maximumForwardSpeed;
         this.forwardMotion = forwardMotionToAdd;
     }
 
-    applyForwarMotion() {
+    applyForwardMotion() {
         var currentPosition = this.position;
 
         currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;

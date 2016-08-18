@@ -9,6 +9,10 @@ export class asteroid extends spaceObject {
         this.size = size;
     }
 
+    public get Reward(){
+        return this.reward;
+    }
+
     public get Size() {
         return this.size;
     }

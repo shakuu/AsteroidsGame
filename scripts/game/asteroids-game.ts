@@ -14,6 +14,9 @@ export interface gameCommands {
 export class asteroidsGameCommands implements gameCommands {
     createShip = 'ship';
     createBasicAttack = 'basicAttack';
+    createLargeAsteroid = 'largeAsteroid';
+    createMediumAsteroid = 'mediumAsteroid';
+    createSmallAsteroid = 'smallAsteroid';
 }
 
 export class asteroidsGame {
@@ -126,7 +129,7 @@ export class asteroidsGame {
 
     private applyShotsMovement() {
         for (var i = 0; i < this.shots.length; i += 1) {
-            this.shots[i].applyForwarMotion();
+            this.shots[i].applyForwardMotion();
             var isOutOfBounds = this.engine.moveShot(this.shots[i].objectId, this.shots[i].position);
 
             if (isOutOfBounds) {
@@ -147,6 +150,6 @@ export class asteroidsGame {
         newShot.position.y = this.player.Ship.position.y + forwardMotion.deltaY;
 
         this.engine.moveShape(newShot.objectId, newShot.position);
-        newShot.createForwarMotion(forwardMotion);
+        newShot.createForwardMotion(forwardMotion);
     }
 }
