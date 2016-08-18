@@ -238,7 +238,7 @@
 	    spaceShip.prototype.setStats = function () {
 	        this.maximumYawSpeed = 5;
 	        this.yawAcceleration = 0.15;
-	        this.yawDeceleration = 0.025;
+	        this.yawDeceleration = 0.05;
 	        this.maximumForwardSpeed = 0.033;
 	        this.forwardAcceleration = 0.05;
 	        this.forwardDeceleration = 0.0003;
