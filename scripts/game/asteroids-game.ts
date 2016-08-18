@@ -5,7 +5,19 @@ import {asteroid} from '../models/asteroids';
 import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
 
+export interface gameCommands {
+    createShip: string;
+    createBasicAttack: string;
+}
+
+export class asteroidsGameCommands implements gameCommands {
+    createShip = 'ship';
+    createBasicAttack = 'basicAttack';
+}
+
 export class asteroidsGame {
+    private commands: gameCommands;
+
     private engine: graphics;
     private factory: objectFactory;
     private controls: IControls;
@@ -17,13 +29,18 @@ export class asteroidsGame {
     private shipLayerId = 0;
     private asteroidsLayerId = 1;
 
+    private currentTimestamp: number;
     private start: number = null;
 
-    constructor(engine: graphics, player: player, controls: IControls, factory: objectFactory) {
+    private shipLastShotTimestamp: number = 0;
+    private shipCanShoot: boolean = false;
+
+    constructor(engine: graphics, player: player, controls: IControls, factory: objectFactory, commands: gameCommands) {
         this.engine = engine;
         this.player = player;
         this.factory = factory;
         this.controls = controls;
+        this.commands = commands;
     }
 
     public get Controls() {
@@ -37,17 +54,22 @@ export class asteroidsGame {
     }
 
     public run = (timestamp) => {
+        this.currentTimestamp = timestamp;
 
         if (!this.start) {
             this.start = timestamp;
+        }
+
+        if (timestamp - this.shipLastShotTimestamp > this.player.Ship.MinimumTimeBetweenShots) {
+            this.shipCanShoot = true;
+        } else {
+            this.shipCanShoot = false;
         }
 
         this.gameLogic();
         if (timestamp - this.start > 1000 / 60) {
             this.start = null;
             this.engine.nextFrame();
-            // DELETE ThIS
-            // console.log(this.Controls);
         }
 
         if (!this.controls.pause) {
@@ -83,6 +105,10 @@ export class asteroidsGame {
         if (this.controls.moveUp) {
             var delta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
             this.player.Ship.createForwarMotion(delta);
+        }
+
+        if (this.controls.shoot && this.shipCanShoot) {
+            this.shipLastShotTimestamp = this.currentTimestamp;
         }
     }
 

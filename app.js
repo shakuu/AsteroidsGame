@@ -78,11 +78,12 @@
 	        width: 960,
 	        height: 540
 	    };
+	    var gameCommands = new asteroids_game_1.asteroidsGameCommands();
 	    var engine = new engine_1.kineticGraphicsEngine(stageOptions, 3, shapeFactory);
-	    var ship = factory.createObject('ship');
+	    var ship = factory.createObject(gameCommands.createShip);
 	    var playerOne = new player_1.player(ship, 'player one');
 	    var controls = new controls_1.keyboardControls();
-	    var game = new asteroids_game_1.asteroidsGame(engine, playerOne, controls, factory);
+	    var game = new asteroids_game_1.asteroidsGame(engine, playerOne, controls, factory, gameCommands);
 	    console.log('it works');
 	    return game;
 	}
@@ -196,6 +197,7 @@
 
 	"use strict";
 	var space_ship_1 = __webpack_require__(4);
+	var ship_attacks_1 = __webpack_require__(12);
 	var objectFactory = (function () {
 	    function objectFactory() {
 	        this.currentId = 0;
@@ -205,6 +207,10 @@
 	        switch (type) {
 	            case 'ship':
 	                newObject = new space_ship_1.spaceShip(this.currentId);
+	                this.currentId += 1;
+	                break;
+	            case 'basicAttack':
+	                newObject = new ship_attacks_1.basicAttack(this.currentId);
 	                this.currentId += 1;
 	                break;
 	            default:
@@ -242,7 +248,15 @@
 	        this.maximumForwardSpeed = 0.033;
 	        this.forwardAcceleration = 0.05;
 	        this.forwardDeceleration = 0.0003;
+	        this.minimumTimeBetweenShots = 100;
 	    };
+	    Object.defineProperty(spaceShip.prototype, "MinimumTimeBetweenShots", {
+	        get: function () {
+	            return this.minimumTimeBetweenShots;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    spaceShip.prototype.increseYawSpeed = function () {
 	        this.yawSpeed += this.yawAcceleration;
 	        if (this.yawSpeed > this.maximumYawSpeed) {
@@ -400,15 +414,32 @@
 /***/ function(module, exports) {
 
 	"use strict";
+	var asteroidsGameCommands = (function () {
+	    function asteroidsGameCommands() {
+	        this.createShip = 'ship';
+	        this.createBasicAttack = 'basicAttack';
+	    }
+	    return asteroidsGameCommands;
+	}());
+	exports.asteroidsGameCommands = asteroidsGameCommands;
 	var asteroidsGame = (function () {
-	    function asteroidsGame(engine, player, controls, factory) {
+	    function asteroidsGame(engine, player, controls, factory, commands) {
 	        var _this = this;
 	        this.shipLayerId = 0;
 	        this.asteroidsLayerId = 1;
 	        this.start = null;
+	        this.shipLastShotTimestamp = 0;
+	        this.shipCanShoot = false;
 	        this.run = function (timestamp) {
+	            _this.currentTimestamp = timestamp;
 	            if (!_this.start) {
 	                _this.start = timestamp;
+	            }
+	            if (timestamp - _this.shipLastShotTimestamp > _this.player.Ship.MinimumTimeBetweenShots) {
+	                _this.shipCanShoot = true;
+	            }
+	            else {
+	                _this.shipCanShoot = false;
 	            }
 	            _this.gameLogic();
 	            if (timestamp - _this.start > 1000 / 60) {
@@ -423,6 +454,7 @@
 	        this.player = player;
 	        this.factory = factory;
 	        this.controls = controls;
+	        this.commands = commands;
 	    }
 	    Object.defineProperty(asteroidsGame.prototype, "Controls", {
 	        get: function () {
@@ -458,6 +490,9 @@
 	        if (this.controls.moveUp) {
 	            var delta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
 	            this.player.Ship.createForwarMotion(delta);
+	        }
+	        if (this.controls.shoot && this.shipCanShoot) {
+	            this.shipLastShotTimestamp = this.currentTimestamp;
 	        }
 	    };
 	    asteroidsGame.prototype.applyPlayerShipMovement = function () {
@@ -517,6 +552,40 @@
 	    return keyboardControls;
 	}());
 	exports.keyboardControls = keyboardControls;
+
+
+/***/ },
+/* 10 */,
+/* 11 */,
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var space_object_1 = __webpack_require__(5);
+	var basicAttack = (function (_super) {
+	    __extends(basicAttack, _super);
+	    function basicAttack(id) {
+	        _super.call(this, id, 'basicAttack');
+	        this.maximumForwardSpeed = 0.022;
+	    }
+	    basicAttack.prototype.createForwarMotion = function (forwardMotionToAdd) {
+	        forwardMotionToAdd.speed = this.maximumForwardSpeed;
+	        this.forwardMotion = forwardMotionToAdd;
+	    };
+	    basicAttack.prototype.applyForwarMotions = function () {
+	        var currentPosition = this.position;
+	        currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;
+	        currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
+	        this.position = currentPosition;
+	    };
+	    return basicAttack;
+	}(space_object_1.spaceObject));
+	exports.basicAttack = basicAttack;
 
 
 /***/ }

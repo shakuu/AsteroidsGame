@@ -8,6 +8,8 @@ class spaceShip extends spaceObject {
     private forwardAcceleration: number;
     private forwardDeceleration: number;
 
+    private minimumTimeBetweenShots: number;
+
     public forwardMotions: forwardMotion[] = [];
 
     constructor(id: number) {
@@ -24,6 +26,12 @@ class spaceShip extends spaceObject {
         this.maximumForwardSpeed = 0.033;
         this.forwardAcceleration = 0.05;
         this.forwardDeceleration = 0.0003;
+
+        this.minimumTimeBetweenShots = 100;
+    }
+
+    public get MinimumTimeBetweenShots() {
+        return this.minimumTimeBetweenShots;
     }
 
     increseYawSpeed() {

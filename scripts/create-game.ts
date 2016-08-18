@@ -5,7 +5,7 @@ import {graphics} from './contracts/igraphics';
 import {objectFactory} from './shapes-factory/objects-factory';
 import {player} from './models/player';
 import {shapesFactory} from './graphics/shapes-factory'
-import {asteroidsGame} from './game/asteroids-game';
+import {asteroidsGame, asteroidsGameCommands} from './game/asteroids-game';
 import {IControls, keyboardControls} from './game/controls'
 
 export function createGame() {
@@ -17,13 +17,15 @@ export function createGame() {
         width: 960,
         height: 540
     };
-    
+
+    var gameCommands = new asteroidsGameCommands();
+
     var engine = new kineticGraphicsEngine(stageOptions, 3, shapeFactory);
-    var ship = factory.createObject('ship');
+    var ship = factory.createObject(gameCommands.createShip);
     var playerOne = new player(ship as spaceShip, 'player one');
     var controls = new keyboardControls();
 
-    var game = new asteroidsGame(engine, playerOne, controls, factory);
+    var game = new asteroidsGame(engine, playerOne, controls, factory, gameCommands);
     console.log('it works');
 
     return game;
