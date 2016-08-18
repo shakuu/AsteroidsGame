@@ -1,0 +1,18 @@
+{
+  "name": "asteroids",
+  "version": "0.0.1",
+  "description": "asteroids game",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "asteroids"
+  ],
+  "author": "shakuu",
+  "license": "ISC",
+  "dependencies": {
+    "ts-loader": "^0.8.2"
+  }
+}
