@@ -130,12 +130,20 @@
 	        return position;
 	    };
 	    kineticGraphicsEngine.prototype.destroyShape = function (id) {
+	        var shapeToRemove = this.shapes[id];
+	        shapeToRemove.remove();
+	        this.shapes[id] = null;
 	    };
 	    kineticGraphicsEngine.prototype.rotateShape = function (id, degree) {
 	        var currentAngleOfRotationInDegrees, shapeToRotate = this.shapes[id];
 	        shapeToRotate.rotate(degree);
 	        currentAngleOfRotationInDegrees = shapeToRotate.getRotation();
 	        return currentAngleOfRotationInDegrees % 360;
+	    };
+	    kineticGraphicsEngine.prototype.detectCollision = function (shapeId, layer) {
+	        var shape = this.shapes[shapeId], layerToCheck = this.layers[layer];
+	        var isColliding = layerToCheck.getIntersection(shape.getPosition());
+	        return isColliding;
 	    };
 	    kineticGraphicsEngine.prototype.moveShape = function (id, position) {
 	        var shapeToMove = this.shapes[id], shapeSize = shapeToMove.getSize();
@@ -160,8 +168,7 @@
 	            this.checkTop(position.y, shapeSize.height) ||
 	            this.checkBot(position.y, shapeSize.height);
 	        if (outOfBounds) {
-	            shotToMove.remove();
-	            this.shapes[id] = null;
+	            this.destroyShape(id);
 	        }
 	        else {
 	            shotToMove.setPosition({ x: position.x, y: position.y });
@@ -371,10 +378,10 @@
 	        this.maximumYawSpeed = 5;
 	        this.yawAcceleration = 0.25;
 	        this.yawDeceleration = 0.05;
-	        this.maximumForwardSpeed = 0.033;
+	        this.maximumForwardSpeed = 0.025;
 	        this.forwardAcceleration = 0.05;
-	        this.forwardDeceleration = 0.0003;
-	        this.minimumTimeBetweenShots = 250;
+	        this.forwardDeceleration = 0.0005;
+	        this.minimumTimeBetweenShots = 333;
 	    };
 	    Object.defineProperty(spaceShip.prototype, "MinimumTimeBetweenShots", {
 	        get: function () {
@@ -673,6 +680,14 @@
 	        this.applyPlayerShipMovement();
 	        this.applyAsteroidsMovement();
 	        this.applyShotsMovement();
+	        // CheckCollision
+	        this.checkPlayerCollision();
+	    };
+	    asteroidsGame.prototype.checkPlayerCollision = function () {
+	        var isColliding = this.engine.detectCollision(this.player.Ship.objectId, this.asteroidsLayerId);
+	        if (isColliding) {
+	            console.log('game-over');
+	        }
 	    };
 	    asteroidsGame.prototype.deceleratePlayerShip = function () {
 	        this.player.Ship.decelerateYawSpeed();

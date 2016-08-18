@@ -4,6 +4,7 @@ export interface graphics {
     rotateShape(id: number, degree: number): number;
     moveShape(id: number, position: canvasPosition);
     moveShot(id: number, position: canvasPosition): boolean;
+    detectCollision(shapeId: number, layer: number): boolean;
     nextFrame();
 }
 

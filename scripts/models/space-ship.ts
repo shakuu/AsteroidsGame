@@ -23,11 +23,11 @@ class spaceShip extends spaceObject {
         this.yawAcceleration = 0.25;
         this.yawDeceleration = 0.05;
 
-        this.maximumForwardSpeed = 0.033;
+        this.maximumForwardSpeed = 0.025;
         this.forwardAcceleration = 0.05;
-        this.forwardDeceleration = 0.0003;
+        this.forwardDeceleration = 0.0005;
 
-        this.minimumTimeBetweenShots = 250;
+        this.minimumTimeBetweenShots = 333;
     }
 
     public get MinimumTimeBetweenShots() {

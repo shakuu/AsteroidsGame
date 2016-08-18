@@ -56,7 +56,9 @@ export class kineticGraphicsEngine implements graphics {
     }
 
     public destroyShape(id: number) {
-
+        var shapeToRemove = this.shapes[id];
+        shapeToRemove.remove();
+        this.shapes[id] = null;
     }
 
     public rotateShape(id: number, degree: number) {
@@ -67,6 +69,14 @@ export class kineticGraphicsEngine implements graphics {
         currentAngleOfRotationInDegrees = shapeToRotate.getRotation();
 
         return currentAngleOfRotationInDegrees % 360;
+    }
+
+    public detectCollision(shapeId: number, layer: number) {
+        var shape = this.shapes[shapeId],
+            layerToCheck = this.layers[layer];
+
+        var isColliding = layerToCheck.getIntersection(shape.getPosition());
+        return isColliding;
     }
 
     public moveShape(id: number, position: canvasPosition) {
@@ -104,8 +114,7 @@ export class kineticGraphicsEngine implements graphics {
             this.checkBot(position.y, shapeSize.height);
 
         if (outOfBounds) {
-            shotToMove.remove();
-            this.shapes[id] = null;
+            this.destroyShape(id);
         } else {
             shotToMove.setPosition({ x: position.x, y: position.y });
         }

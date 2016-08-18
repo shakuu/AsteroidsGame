@@ -115,6 +115,16 @@ export class asteroidsGame {
         this.applyPlayerShipMovement();
         this.applyAsteroidsMovement();
         this.applyShotsMovement();
+
+        // CheckCollision
+        this.checkPlayerCollision();
+    }
+
+    private checkPlayerCollision() {
+        var isColliding = this.engine.detectCollision(this.player.Ship.objectId, this.asteroidsLayerId);
+        if (isColliding) {
+            console.log('game-over');
+        }
     }
 
     private deceleratePlayerShip() {
