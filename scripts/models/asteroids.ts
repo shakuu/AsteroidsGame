@@ -1,16 +1,33 @@
 import {spaceObject} from './space-object';
 
-class asteroid extends spaceObject {
-    private currentSize: number;
+export class asteroid extends spaceObject {
+    private size: number;
+    private reward: number;
 
-    constructor(id: number, size: number) {
-        super(id, 'asteroid');
-        this.currentSize = size;
+    constructor(id: number, size: number, pointsReward: number, type: string) {
+        super(id, type);
+        this.size = size;
     }
 
     public get Size() {
-        return this.currentSize;
+        return this.size;
     }
 }
 
-export {asteroid};
+export class largeAsteroid extends asteroid {
+    constructor(id: number) {
+        super(id, 3, 20, 'largeAsteroid');
+    }
+}
+
+export class mediumAsteroid extends asteroid{
+    constructor(id: number) {
+        super(id, 2, 50, 'mediumAsteroid');
+    }
+}
+
+export class smallAsteroid extends asteroid{
+    constructor(id: number) {
+        super(id, 1, 100, 'smallAsteroid');
+    }
+}
