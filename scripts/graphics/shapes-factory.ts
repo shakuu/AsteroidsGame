@@ -12,6 +12,10 @@ export class shapesFactory implements interfaceFactory {
         switch (type) {
             case 'ship':
                 newShape = createShipShape();
+                break;
+            case 'basicAttack':
+                newShape = createBasicAttackShape();
+                break;
         }
 
         return newShape;
@@ -27,5 +31,22 @@ function createShipShape(): Kinetic.IShape {
         fill: 'yellowgreen',
         offset: { x: 10, y: 20 }
     });
+
+    return newShape;
+}
+
+function createBasicAttackShape() {
+    var newShape = new Kinetic.Rect({
+        x: 0,
+        y: 0,
+        width: 10,
+        height: 10,
+        fill: 'yellowgreen',
+        offset: {
+            x: 5,
+            y: 5
+        }
+    });
+
     return newShape;
 }

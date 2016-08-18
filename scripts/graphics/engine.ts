@@ -50,7 +50,7 @@ export class kineticGraphicsEngine implements graphics {
             position: canvasPosition;
         this.layers[layerId].add(newShape);
         this.shapes[id] = newShape;
-
+        
         position = newShape.getPosition();
         return position;
     }
@@ -84,7 +84,7 @@ export class kineticGraphicsEngine implements graphics {
         } else if (this.checkTop(position.y, shapeSize.height)) {
 
             position.y = this.stageOptions.height - (shapeSize.height / 2);
-            
+
         } else if (this.checkBot(position.y, shapeSize.height)) {
 
             position.y = shapeSize.height / 2;

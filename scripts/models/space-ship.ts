@@ -27,7 +27,7 @@ class spaceShip extends spaceObject {
         this.forwardAcceleration = 0.05;
         this.forwardDeceleration = 0.0003;
 
-        this.minimumTimeBetweenShots = 100;
+        this.minimumTimeBetweenShots = 250;
     }
 
     public get MinimumTimeBetweenShots() {

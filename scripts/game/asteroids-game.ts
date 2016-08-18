@@ -4,6 +4,7 @@ import {objectFactory} from '../shapes-factory/objects-factory';
 import {asteroid} from '../models/asteroids';
 import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
+import {basicAttack, shipAttack} from '../models/ship-attacks';
 
 export interface gameCommands {
     createShip: string;
@@ -23,11 +24,12 @@ export class asteroidsGame {
     private controls: IControls;
 
     private player: player;
-    private asteroids: asteroid[];
-    private shots;
+    private asteroids: asteroid[] = [];
+    private shots: shipAttack[] = [];
 
     private shipLayerId = 0;
     private asteroidsLayerId = 1;
+    private shotsLayerId = 2;
 
     private currentTimestamp: number;
     private start: number = null;
@@ -103,12 +105,13 @@ export class asteroidsGame {
         }
 
         if (this.controls.moveUp) {
-            var delta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
-            this.player.Ship.createForwarMotion(delta);
+            var forwardMotion = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
+            this.player.Ship.createForwarMotion(forwardMotion);
         }
 
         if (this.controls.shoot && this.shipCanShoot) {
             this.shipLastShotTimestamp = this.currentTimestamp;
+            this.createNewShot();
         }
     }
 
@@ -118,5 +121,19 @@ export class asteroidsGame {
 
         this.player.Ship.applyForwarMotions();
         this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
+    }
+
+    private createNewShot() {
+        var newShot = this.factory.createObject(this.commands.createBasicAttack) as basicAttack;
+        var forwardMotion = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
+
+        this.shots.push(newShot);
+        newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, this.shotsLayerId);
+
+        newShot.position.x = this.player.Ship.position.x + forwardMotion.deltaX;
+        newShot.position.y = this.player.Ship.position.y + forwardMotion.deltaY;
+
+        this.engine.moveShape(newShot.objectId, newShot.position);
+        newShot.createForwarMotion(forwardMotion);
     }
 }

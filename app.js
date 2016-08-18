@@ -248,7 +248,7 @@
 	        this.maximumForwardSpeed = 0.033;
 	        this.forwardAcceleration = 0.05;
 	        this.forwardDeceleration = 0.0003;
-	        this.minimumTimeBetweenShots = 100;
+	        this.minimumTimeBetweenShots = 250;
 	    };
 	    Object.defineProperty(spaceShip.prototype, "MinimumTimeBetweenShots", {
 	        get: function () {
@@ -390,6 +390,10 @@
 	        switch (type) {
 	            case 'ship':
 	                newShape = createShipShape();
+	                break;
+	            case 'basicAttack':
+	                newShape = createBasicAttackShape();
+	                break;
 	        }
 	        return newShape;
 	    };
@@ -404,6 +408,20 @@
 	        stroke: 'yellowgreen',
 	        fill: 'yellowgreen',
 	        offset: { x: 10, y: 20 }
+	    });
+	    return newShape;
+	}
+	function createBasicAttackShape() {
+	    var newShape = new Kinetic.Rect({
+	        x: 0,
+	        y: 0,
+	        width: 10,
+	        height: 10,
+	        fill: 'yellowgreen',
+	        offset: {
+	            x: 5,
+	            y: 5
+	        }
 	    });
 	    return newShape;
 	}
@@ -425,8 +443,11 @@
 	var asteroidsGame = (function () {
 	    function asteroidsGame(engine, player, controls, factory, commands) {
 	        var _this = this;
+	        this.asteroids = [];
+	        this.shots = [];
 	        this.shipLayerId = 0;
 	        this.asteroidsLayerId = 1;
+	        this.shotsLayerId = 2;
 	        this.start = null;
 	        this.shipLastShotTimestamp = 0;
 	        this.shipCanShoot = false;
@@ -488,11 +509,12 @@
 	            this.player.Ship.increseYawSpeed();
 	        }
 	        if (this.controls.moveUp) {
-	            var delta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
-	            this.player.Ship.createForwarMotion(delta);
+	            var forwardMotion = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
+	            this.player.Ship.createForwarMotion(forwardMotion);
 	        }
 	        if (this.controls.shoot && this.shipCanShoot) {
 	            this.shipLastShotTimestamp = this.currentTimestamp;
+	            this.createNewShot();
 	        }
 	    };
 	    asteroidsGame.prototype.applyPlayerShipMovement = function () {
@@ -500,6 +522,16 @@
 	            this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed);
 	        this.player.Ship.applyForwarMotions();
 	        this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
+	    };
+	    asteroidsGame.prototype.createNewShot = function () {
+	        var newShot = this.factory.createObject(this.commands.createBasicAttack);
+	        var forwardMotion = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
+	        this.shots.push(newShot);
+	        newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, this.shotsLayerId);
+	        newShot.position.x = this.player.Ship.position.x + forwardMotion.deltaX;
+	        newShot.position.y = this.player.Ship.position.y + forwardMotion.deltaY;
+	        this.engine.moveShape(newShot.objectId, newShot.position);
+	        newShot.createForwarMotion(forwardMotion);
 	    };
 	    return asteroidsGame;
 	}());
@@ -577,7 +609,7 @@
 	        forwardMotionToAdd.speed = this.maximumForwardSpeed;
 	        this.forwardMotion = forwardMotionToAdd;
 	    };
-	    basicAttack.prototype.applyForwarMotions = function () {
+	    basicAttack.prototype.applyForwarMotion = function () {
 	        var currentPosition = this.position;
 	        currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;
 	        currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
