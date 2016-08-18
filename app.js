@@ -101,6 +101,7 @@
 	        this.shapesFactory = shapesFactory;
 	        this.stage = this.createStage(stageOptions.container, stageOptions.width, stageOptions.height);
 	        this.layers = this.createLayers(numberOfLayers);
+	        this.stageOptions = stageOptions;
 	    }
 	    kineticGraphicsEngine.prototype.createStage = function (containerId, width, height) {
 	        var stage;
@@ -136,7 +137,48 @@
 	        return currentAngleOfRotationInDegrees % 360;
 	    };
 	    kineticGraphicsEngine.prototype.moveShape = function (id, position) {
-	        this.shapes[id].setPosition({ x: position.x, y: position.y });
+	        var shapeToMove = this.shapes[id], shapeSize = shapeToMove.getSize();
+	        if (this.checkLeft(position.x, shapeSize.width)) {
+	            position.x = this.stageOptions.width - (shapeSize.width / 2);
+	        }
+	        else if (this.checkRight(position.x, shapeSize.width)) {
+	            position.x = shapeSize.width / 2;
+	        }
+	        else if (this.checkTop(position.y, shapeSize.height)) {
+	            position.y = this.stageOptions.height - (shapeSize.height / 2);
+	        }
+	        else if (this.checkBot(position.y, shapeSize.height)) {
+	            position.y = shapeSize.height / 2;
+	        }
+	        shapeToMove.setPosition({ x: position.x, y: position.y });
+	    };
+	    kineticGraphicsEngine.prototype.moveShot = function (id, position) {
+	        var outOfBounds;
+	        return outOfBounds;
+	    };
+	    kineticGraphicsEngine.prototype.checkLeft = function (x, width) {
+	        if (x - width < 0) {
+	            return true;
+	        }
+	        return false;
+	    };
+	    kineticGraphicsEngine.prototype.checkRight = function (x, width) {
+	        if (x + width > this.stageOptions.width) {
+	            return true;
+	        }
+	        return false;
+	    };
+	    kineticGraphicsEngine.prototype.checkTop = function (y, height) {
+	        if (y - height < 0) {
+	            return true;
+	        }
+	        return false;
+	    };
+	    kineticGraphicsEngine.prototype.checkBot = function (y, height) {
+	        if (y + height > this.stageOptions.height) {
+	            return true;
+	        }
+	        return false;
 	    };
 	    kineticGraphicsEngine.prototype.nextFrame = function () {
 	        for (var i = 0; i < this.layers.length; i += 1) {
@@ -342,8 +384,8 @@
 	exports.shapesFactory = shapesFactory;
 	function createShipShape() {
 	    var newShape = new Kinetic.Line({
-	        x: 100,
-	        y: 100,
+	        x: 470,
+	        y: 250,
 	        points: [10, 0, 20, 40, 0, 40, 10, 0],
 	        stroke: 'yellowgreen',
 	        fill: 'yellowgreen',
@@ -398,6 +440,15 @@
 	        // Decelerate
 	        this.deceleratePlayerShip();
 	        // Read Controls and Accelerate
+	        this.handleUserInput();
+	        // Move/ Rotate
+	        this.applyPlayerShipMovement();
+	    };
+	    asteroidsGame.prototype.deceleratePlayerShip = function () {
+	        this.player.Ship.decelerateYawSpeed();
+	        this.player.Ship.decelerateForwarMotions();
+	    };
+	    asteroidsGame.prototype.handleUserInput = function () {
 	        if (this.controls.rotateLeft) {
 	            this.player.Ship.decreaseYawSpeed();
 	        }
@@ -408,16 +459,12 @@
 	            var delta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
 	            this.player.Ship.createForwarMotion(delta);
 	        }
-	        // Apply Rotation
+	    };
+	    asteroidsGame.prototype.applyPlayerShipMovement = function () {
 	        this.player.Ship.currentYawAngleInDegrees =
 	            this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed);
-	        // Apply Forward movement
 	        this.player.Ship.applyForwarMotions();
 	        this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
-	    };
-	    asteroidsGame.prototype.deceleratePlayerShip = function () {
-	        this.player.Ship.decelerateYawSpeed();
-	        this.player.Ship.decelerateForwarMotions();
 	    };
 	    return asteroidsGame;
 	}());

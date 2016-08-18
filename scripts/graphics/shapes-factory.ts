@@ -20,8 +20,8 @@ export class shapesFactory implements interfaceFactory {
 
 function createShipShape(): Kinetic.IShape {
     var newShape = new Kinetic.Line({
-        x: 100,
-        y: 100,
+        x: 470,
+        y: 250,
         points: [10, 0, 20, 40, 0, 40, 10, 0],
         stroke: 'yellowgreen',
         fill: 'yellowgreen',

@@ -3,6 +3,7 @@ export interface graphics {
     destroyShape(id: number);
     rotateShape(id: number, degree: number): number;
     moveShape(id: number, position: canvasPosition);
+    moveShot(id: number, position: canvasPosition): boolean;
     nextFrame();
 }
 

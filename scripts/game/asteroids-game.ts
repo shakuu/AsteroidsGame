@@ -60,6 +60,18 @@ export class asteroidsGame {
         this.deceleratePlayerShip();
 
         // Read Controls and Accelerate
+        this.handleUserInput();
+
+        // Move/ Rotate
+        this.applyPlayerShipMovement();
+    }
+
+    private deceleratePlayerShip() {
+        this.player.Ship.decelerateYawSpeed();
+        this.player.Ship.decelerateForwarMotions();
+    }
+
+    private handleUserInput() {
         if (this.controls.rotateLeft) {
             this.player.Ship.decreaseYawSpeed();
         }
@@ -72,18 +84,13 @@ export class asteroidsGame {
             var delta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
             this.player.Ship.createForwarMotion(delta);
         }
+    }
 
-        // Apply Rotation
+    private applyPlayerShipMovement() {
         this.player.Ship.currentYawAngleInDegrees =
             this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed)
 
-        // Apply Forward movement
         this.player.Ship.applyForwarMotions();
         this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
-    }
-
-    private deceleratePlayerShip() {
-        this.player.Ship.decelerateYawSpeed();
-        this.player.Ship.decelerateForwarMotions();
     }
 }

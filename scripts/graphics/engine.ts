@@ -14,10 +14,13 @@ export class kineticGraphicsEngine implements graphics {
 
     private shapesFactory: shapesFactory;
 
+    private stageOptions: stageOptions;
+
     constructor(stageOptions: stageOptions, numberOfLayers: number, shapesFactory: shapesFactory) {
         this.shapesFactory = shapesFactory;
         this.stage = this.createStage(stageOptions.container, stageOptions.width, stageOptions.height);
         this.layers = this.createLayers(numberOfLayers);
+        this.stageOptions = stageOptions
     }
 
     private createStage(containerId: string, width: number, height: number) {
@@ -67,7 +70,65 @@ export class kineticGraphicsEngine implements graphics {
     }
 
     public moveShape(id: number, position: canvasPosition) {
-        this.shapes[id].setPosition({ x: position.x, y: position.y });
+        var shapeToMove = this.shapes[id],
+            shapeSize = shapeToMove.getSize();
+
+        if (this.checkLeft(position.x, shapeSize.width)) {
+
+            position.x = this.stageOptions.width - (shapeSize.width / 2);
+
+        } else if (this.checkRight(position.x, shapeSize.width)) {
+
+            position.x = shapeSize.width / 2;
+
+        } else if (this.checkTop(position.y, shapeSize.height)) {
+
+            position.y = this.stageOptions.height - (shapeSize.height / 2);
+            
+        } else if (this.checkBot(position.y, shapeSize.height)) {
+
+            position.y = shapeSize.height / 2;
+        }
+
+        shapeToMove.setPosition({ x: position.x, y: position.y });
+    }
+
+    public moveShot(id: number, position: canvasPosition) {
+        var outOfBounds: boolean;
+
+        return outOfBounds;
+    }
+
+    private checkLeft(x: number, width: number) {
+        if (x - width < 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private checkRight(x: number, width: number) {
+        if (x + width > this.stageOptions.width) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private checkTop(y: number, height: number) {
+        if (y - height < 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private checkBot(y: number, height: number) {
+        if (y + height > this.stageOptions.height) {
+            return true;
+        }
+
+        return false;
     }
 
     public nextFrame() {
