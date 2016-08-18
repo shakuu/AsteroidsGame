@@ -11,11 +11,13 @@ export class shapesFactory implements interfaceFactory {
 
         switch (type) {
             case 'ship':
-                newShape = new Kinetic.Rect({
+                newShape = new Kinetic.RegularPolygon({
                     x: 100,
                     y: 100,
                     width: 40,
                     height: 40,
+                    sides: 3,
+                    radius: 70,
                     stroke: 'black',
                     fill: 'black'
                 })
