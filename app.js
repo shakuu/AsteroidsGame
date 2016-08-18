@@ -486,6 +486,7 @@
 	var player = (function () {
 	    function player(ship, name) {
 	        this.score = 0;
+	        this.gameOver = false;
 	        this.ship = ship;
 	        this.name = name;
 	    }
@@ -636,6 +637,8 @@
 	                _this.start = null;
 	                _this.engine.nextFrame();
 	            }
+	            if (_this.player.gameOver) {
+	            }
 	            if (!_this.controls.pause) {
 	                window.requestAnimationFrame(_this.run);
 	            }
@@ -686,7 +689,7 @@
 	    asteroidsGame.prototype.checkPlayerCollision = function () {
 	        var isColliding = this.engine.detectCollision(this.player.Ship.objectId, this.asteroidsLayerId);
 	        if (isColliding) {
-	            console.log('game-over');
+	            this.player.gameOver = true;
 	        }
 	    };
 	    asteroidsGame.prototype.deceleratePlayerShip = function () {

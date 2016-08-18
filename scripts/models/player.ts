@@ -4,6 +4,8 @@ export class player {
     private ship: spaceShip;
     private name: string;
     private score: number = 0;
+    
+    public gameOver: boolean = false;
 
     constructor(ship: spaceShip, name: string) {
         this.ship = ship;

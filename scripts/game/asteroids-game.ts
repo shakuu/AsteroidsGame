@@ -99,6 +99,10 @@ export class asteroidsGame {
             this.engine.nextFrame();
         }
 
+        if (this.player.gameOver) {
+            // console.log('gameover');
+        }
+
         if (!this.controls.pause) {
             window.requestAnimationFrame(this.run);
         }
@@ -123,7 +127,7 @@ export class asteroidsGame {
     private checkPlayerCollision() {
         var isColliding = this.engine.detectCollision(this.player.Ship.objectId, this.asteroidsLayerId);
         if (isColliding) {
-            console.log('game-over');
+            this.player.gameOver = true;
         }
     }
 
