@@ -1,6 +1,6 @@
 import {factory} from './contract';
 import {spaceObject} from '../models/space-object';
-import {asteroid} from '../models/asteroids';
+import {largeAsteroid, mediumAsteroid, smallAsteroid} from '../models/asteroids';
 import {spaceShip} from '../models/space-ship';
 import {basicAttack} from '../models/ship-attacks';
 
@@ -22,6 +22,18 @@ export class objectFactory implements factory {
                 break;
             case 'basicAttack':
                 newObject = new basicAttack(this.currentId);
+                this.currentId += 1;
+                break;
+            case 'largeAsteroid':
+                newObject = new largeAsteroid(this.currentId);
+                this.currentId += 1;
+                break;
+            case 'mediumAsteroid':
+                newObject = new mediumAsteroid(this.currentId);
+                this.currentId += 1;
+                break;
+            case 'smallAsteroid':
+                newObject = new smallAsteroid(this.currentId);
                 this.currentId += 1;
                 break;
             default:

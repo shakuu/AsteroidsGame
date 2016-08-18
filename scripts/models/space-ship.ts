@@ -73,7 +73,7 @@ class spaceShip extends spaceObject {
         this.forwardMotions.push(forwardMotionToAdd);
     }
 
-    decelerateForwarMotions() {
+    decelerateForwardMotions() {
         for (var i = 0; i < this.forwardMotions.length; i += 1) {
 
             this.forwardMotions[i].speed -= this.forwardDeceleration;
@@ -83,7 +83,7 @@ class spaceShip extends spaceObject {
         }
     }
 
-    applyForwarMotions() {
+    applyForwardMotions() {
         var currentMotion: forwardMotion,
             currentPosition = this.position;
 

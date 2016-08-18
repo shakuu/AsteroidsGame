@@ -66,10 +66,10 @@
 	"use strict";
 	var engine_1 = __webpack_require__(2);
 	var objects_factory_1 = __webpack_require__(3);
-	var player_1 = __webpack_require__(7);
-	var shapes_factory_1 = __webpack_require__(8);
-	var asteroids_game_1 = __webpack_require__(9);
-	var controls_1 = __webpack_require__(10);
+	var player_1 = __webpack_require__(8);
+	var shapes_factory_1 = __webpack_require__(9);
+	var asteroids_game_1 = __webpack_require__(10);
+	var controls_1 = __webpack_require__(11);
 	function createGame() {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
@@ -207,8 +207,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var space_ship_1 = __webpack_require__(4);
-	var ship_attacks_1 = __webpack_require__(6);
+	var asteroids_1 = __webpack_require__(4);
+	var space_ship_1 = __webpack_require__(6);
+	var ship_attacks_1 = __webpack_require__(7);
 	var objectFactory = (function () {
 	    function objectFactory() {
 	        this.currentId = 0;
@@ -224,6 +225,18 @@
 	                newObject = new ship_attacks_1.basicAttack(this.currentId);
 	                this.currentId += 1;
 	                break;
+	            case 'largeAsteroid':
+	                newObject = new asteroids_1.largeAsteroid(this.currentId);
+	                this.currentId += 1;
+	                break;
+	            case 'mediumAsteroid':
+	                newObject = new asteroids_1.mediumAsteroid(this.currentId);
+	                this.currentId += 1;
+	                break;
+	            case 'smallAsteroid':
+	                newObject = new asteroids_1.smallAsteroid(this.currentId);
+	                this.currentId += 1;
+	                break;
 	            default:
 	                break;
 	        }
@@ -236,6 +249,105 @@
 
 /***/ },
 /* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var space_object_1 = __webpack_require__(5);
+	var asteroid = (function (_super) {
+	    __extends(asteroid, _super);
+	    function asteroid(id, size, pointsReward, type) {
+	        _super.call(this, id, type);
+	        this.size = size;
+	    }
+	    Object.defineProperty(asteroid.prototype, "Reward", {
+	        get: function () {
+	            return this.reward;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(asteroid.prototype, "Size", {
+	        get: function () {
+	            return this.size;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    return asteroid;
+	}(space_object_1.spaceObject));
+	exports.asteroid = asteroid;
+	var largeAsteroid = (function (_super) {
+	    __extends(largeAsteroid, _super);
+	    function largeAsteroid(id) {
+	        _super.call(this, id, 3, 20, 'largeAsteroid');
+	        this.yawSpeed = 1;
+	    }
+	    return largeAsteroid;
+	}(asteroid));
+	exports.largeAsteroid = largeAsteroid;
+	var mediumAsteroid = (function (_super) {
+	    __extends(mediumAsteroid, _super);
+	    function mediumAsteroid(id) {
+	        _super.call(this, id, 2, 50, 'mediumAsteroid');
+	        this.yawSpeed = 1;
+	    }
+	    return mediumAsteroid;
+	}(asteroid));
+	exports.mediumAsteroid = mediumAsteroid;
+	var smallAsteroid = (function (_super) {
+	    __extends(smallAsteroid, _super);
+	    function smallAsteroid(id) {
+	        _super.call(this, id, 1, 100, 'smallAsteroid');
+	        this.yawSpeed = 1;
+	    }
+	    return smallAsteroid;
+	}(asteroid));
+	exports.smallAsteroid = smallAsteroid;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var spaceObject = (function () {
+	    function spaceObject(id, type) {
+	        this.minimumSpeed = 0;
+	        this.yawSpeed = 0;
+	        this.forwardSpeed = 0;
+	        this.objectId = id;
+	        this.type = type;
+	    }
+	    // x = cx + r * cos(a)
+	    // y = cy + r * sin(a)
+	    spaceObject.prototype.getForwardMotionDelta = function (rotationInDegrees) {
+	        var deltaX, deltaY, rotationInRadians = (rotationInDegrees - 90) * Math.PI / 180;
+	        deltaX = 10 * Math.cos(rotationInRadians);
+	        deltaY = 10 * Math.sin(rotationInRadians);
+	        return { deltaX: deltaX, deltaY: deltaY, speed: 0 };
+	    };
+	    spaceObject.prototype.createForwardMotion = function (forwardMotionToAdd) {
+	        forwardMotionToAdd.speed = this.maximumForwardSpeed;
+	        this.forwardMotion = forwardMotionToAdd;
+	    };
+	    spaceObject.prototype.applyForwardMotion = function () {
+	        var currentPosition = this.position;
+	        currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;
+	        currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
+	        this.position = currentPosition;
+	    };
+	    return spaceObject;
+	}());
+	exports.spaceObject = spaceObject;
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -303,7 +415,7 @@
 	        });
 	        this.forwardMotions.push(forwardMotionToAdd);
 	    };
-	    spaceShip.prototype.decelerateForwarMotions = function () {
+	    spaceShip.prototype.decelerateForwardMotions = function () {
 	        for (var i = 0; i < this.forwardMotions.length; i += 1) {
 	            this.forwardMotions[i].speed -= this.forwardDeceleration;
 	            if (this.forwardMotions[i].speed <= 0) {
@@ -311,7 +423,7 @@
 	            }
 	        }
 	    };
-	    spaceShip.prototype.applyForwarMotions = function () {
+	    spaceShip.prototype.applyForwardMotions = function () {
 	        var currentMotion, currentPosition = this.position;
 	        for (var i = 0; i < this.forwardMotions.length; i += 1) {
 	            currentMotion = this.forwardMotions[i];
@@ -326,33 +438,7 @@
 
 
 /***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	"use strict";
-	var spaceObject = (function () {
-	    function spaceObject(id, type) {
-	        this.minimumSpeed = 0;
-	        this.yawSpeed = 0;
-	        this.forwardSpeed = 0;
-	        this.objectId = id;
-	        this.type = type;
-	    }
-	    // x = cx + r * cos(a)
-	    // y = cy + r * sin(a)
-	    spaceObject.prototype.getForwardMotionDelta = function (rotationInDegrees) {
-	        var deltaX, deltaY, rotationInRadians = (rotationInDegrees - 90) * Math.PI / 180;
-	        deltaX = 10 * Math.cos(rotationInRadians);
-	        deltaY = 10 * Math.sin(rotationInRadians);
-	        return { deltaX: deltaX, deltaY: deltaY, speed: 0 };
-	    };
-	    return spaceObject;
-	}());
-	exports.spaceObject = spaceObject;
-
-
-/***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -364,19 +450,10 @@
 	var space_object_1 = __webpack_require__(5);
 	var attack = (function (_super) {
 	    __extends(attack, _super);
+	    // private forwardMotion: forwardMotion;
 	    function attack(id, type) {
 	        _super.call(this, id, 'basicAttack');
 	    }
-	    attack.prototype.createForwardMotion = function (forwardMotionToAdd) {
-	        forwardMotionToAdd.speed = this.maximumForwardSpeed;
-	        this.forwardMotion = forwardMotionToAdd;
-	    };
-	    attack.prototype.applyForwardMotion = function () {
-	        var currentPosition = this.position;
-	        currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;
-	        currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
-	        this.position = currentPosition;
-	    };
 	    return attack;
 	}(space_object_1.spaceObject));
 	exports.attack = attack;
@@ -392,7 +469,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -429,7 +506,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -451,6 +528,17 @@
 	    return shapesFactory;
 	}());
 	exports.shapesFactory = shapesFactory;
+	function CreateLargeAsteroidTypeOne() {
+	    var newShape = new Kinetic.Line({
+	        x: 0,
+	        y: 0,
+	        points: [10, 0, 20, 40, 0, 40, 10, 0],
+	        stroke: 'yellowgreen',
+	        fill: 'yellowgreen',
+	        offset: { x: 10, y: 20 }
+	    });
+	    return newShape;
+	}
 	function createShipShape() {
 	    var newShape = new Kinetic.Line({
 	        x: 470,
@@ -479,7 +567,7 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -554,7 +642,7 @@
 	    };
 	    asteroidsGame.prototype.deceleratePlayerShip = function () {
 	        this.player.Ship.decelerateYawSpeed();
-	        this.player.Ship.decelerateForwarMotions();
+	        this.player.Ship.decelerateForwardMotions();
 	    };
 	    asteroidsGame.prototype.handleUserInput = function () {
 	        if (this.controls.rotateLeft) {
@@ -575,7 +663,7 @@
 	    asteroidsGame.prototype.applyPlayerShipMovement = function () {
 	        this.player.Ship.currentYawAngleInDegrees =
 	            this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed);
-	        this.player.Ship.applyForwarMotions();
+	        this.player.Ship.applyForwardMotions();
 	        this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
 	    };
 	    asteroidsGame.prototype.applyShotsMovement = function () {
@@ -604,7 +692,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";

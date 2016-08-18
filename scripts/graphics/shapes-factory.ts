@@ -22,6 +22,19 @@ export class shapesFactory implements interfaceFactory {
     }
 }
 
+function CreateLargeAsteroidTypeOne() {
+    var newShape = new Kinetic.Line({
+        x: 0,
+        y: 0,
+        points: [10, 0, 20, 40, 0, 40, 10, 0],
+        stroke: 'yellowgreen',
+        fill: 'yellowgreen',
+        offset: { x: 10, y: 20 }
+    });
+
+    return newShape;
+}
+
 function createShipShape(): Kinetic.IShape {
     var newShape = new Kinetic.Line({
         x: 470,

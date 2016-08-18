@@ -21,6 +21,7 @@ class spaceObject {
     type: string;
 
     position: canvasPosition;
+    protected forwardMotion: forwardMotion;
 
     constructor(id: number, type: string) {
         this.objectId = id;
@@ -37,6 +38,20 @@ class spaceObject {
         deltaX = 10 * Math.cos(rotationInRadians);
         deltaY = 10 * Math.sin(rotationInRadians);
         return { deltaX: deltaX, deltaY: deltaY, speed: 0 };
+    }
+
+    createForwardMotion(forwardMotionToAdd: forwardMotion) {
+        forwardMotionToAdd.speed = this.maximumForwardSpeed;
+        this.forwardMotion = forwardMotionToAdd;
+    }
+
+    applyForwardMotion() {
+        var currentPosition = this.position;
+
+        currentPosition.x += this.forwardMotion.deltaX * this.forwardMotion.speed;
+        currentPosition.y += this.forwardMotion.deltaY * this.forwardMotion.speed;
+
+        this.position = currentPosition;
     }
 }
 

@@ -1,7 +1,7 @@
 import {player} from '../models/player';
 import {graphics} from '../contracts/igraphics';
 import {objectFactory} from '../shapes-factory/objects-factory';
-import {asteroid} from '../models/asteroids';
+import {asteroid, largeAsteroid, mediumAsteroid, smallAsteroid} from '../models/asteroids';
 import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
 import {basicAttack, attack} from '../models/ship-attacks';
@@ -96,7 +96,7 @@ export class asteroidsGame {
 
     private deceleratePlayerShip() {
         this.player.Ship.decelerateYawSpeed();
-        this.player.Ship.decelerateForwarMotions();
+        this.player.Ship.decelerateForwardMotions();
     }
 
     private handleUserInput() {
@@ -123,7 +123,7 @@ export class asteroidsGame {
         this.player.Ship.currentYawAngleInDegrees =
             this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed)
 
-        this.player.Ship.applyForwarMotions();
+        this.player.Ship.applyForwardMotions();
         this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
     }
 
