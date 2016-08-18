@@ -20,7 +20,7 @@ class spaceShip extends spaceObject {
 
     private setStats() {
         this.maximumYawSpeed = 5;
-        this.yawAcceleration = 0.15;
+        this.yawAcceleration = 0.25;
         this.yawDeceleration = 0.05;
 
         this.maximumForwardSpeed = 0.033;
