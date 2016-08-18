@@ -43,6 +43,8 @@ export class asteroidsGame {
     private shipLastShotTimestamp: number = 0;
     private shipCanShoot: boolean = false;
 
+    private lastCollisionDetectionTimeStamp: number = 0;
+
     constructor(engine: graphics, player: player, controls: IControls, factory: objectFactory, commands: gameCommands) {
         this.engine = engine;
         this.player = player;
@@ -94,6 +96,12 @@ export class asteroidsGame {
         }
 
         this.gameLogic();
+
+        if (timestamp - this.lastCollisionDetectionTimeStamp > 50) {
+            this.collisionDetection();
+            this.lastCollisionDetectionTimeStamp = timestamp;
+        }
+
         if (timestamp - this.start > 1000 / 60) {
             this.start = null;
             this.engine.nextFrame();
@@ -108,6 +116,11 @@ export class asteroidsGame {
         }
     }
 
+    private collisionDetection() {
+        this.checkPlayerCollision();
+        this.checkAsteroidCollision();
+    }
+
     private gameLogic() {
         // Decelerate
         this.deceleratePlayerShip();
@@ -119,15 +132,28 @@ export class asteroidsGame {
         this.applyPlayerShipMovement();
         this.applyAsteroidsMovement();
         this.applyShotsMovement();
-
-        // CheckCollision
-        this.checkPlayerCollision();
     }
 
     private checkPlayerCollision() {
         var isColliding = this.engine.detectCollision(this.player.Ship.objectId, this.asteroidsLayerId);
         if (isColliding) {
             this.player.gameOver = true;
+        }
+    }
+
+    private checkAsteroidCollision() {
+        var isColliding = false,
+            current: attack;
+
+        for (var i = 0; i < this.shots.length; i += 1) {
+            current = this.shots[i];
+            isColliding = false;
+            isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
+
+            if (isColliding) {
+                // split
+                // console.log(isColliding);
+            }
         }
     }
 

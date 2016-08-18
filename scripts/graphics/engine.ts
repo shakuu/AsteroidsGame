@@ -35,7 +35,7 @@ export class kineticGraphicsEngine implements graphics {
     }
 
     private createLayers(amount: number) {
-        var layers: Kinetic.ILayer[] = [];
+        var layers = []
         for (var i = 0; i < amount; i += 1) {
             var layer = new Kinetic.Layer();
             layers.push(layer);
@@ -73,7 +73,7 @@ export class kineticGraphicsEngine implements graphics {
 
     public detectCollision(shapeId: number, layer: number) {
         var shape = this.shapes[shapeId],
-            layerToCheck = this.layers[layer];
+            layerToCheck = this.layers[layer] as Kinetic.ILayer;
 
         var isColliding = layerToCheck.getIntersection(shape.getPosition());
         return isColliding;

@@ -377,7 +377,7 @@
 	    spaceShip.prototype.setStats = function () {
 	        this.maximumYawSpeed = 5;
 	        this.yawAcceleration = 0.25;
-	        this.yawDeceleration = 0.05;
+	        this.yawDeceleration = 0.10;
 	        this.maximumForwardSpeed = 0.025;
 	        this.forwardAcceleration = 0.05;
 	        this.forwardDeceleration = 0.0005;
@@ -471,7 +471,7 @@
 	    __extends(basicAttack, _super);
 	    function basicAttack(id) {
 	        _super.call(this, id, 'basicAttack');
-	        this.maximumForwardSpeed = 0.222;
+	        this.maximumForwardSpeed = 1;
 	    }
 	    return basicAttack;
 	}(attack));
@@ -621,6 +621,7 @@
 	        this.start = null;
 	        this.shipLastShotTimestamp = 0;
 	        this.shipCanShoot = false;
+	        this.lastCollisionDetectionTimeStamp = 0;
 	        this.run = function (timestamp) {
 	            _this.currentTimestamp = timestamp;
 	            if (!_this.start) {
@@ -633,6 +634,10 @@
 	                _this.shipCanShoot = false;
 	            }
 	            _this.gameLogic();
+	            if (timestamp - _this.lastCollisionDetectionTimeStamp > 50) {
+	                _this.collisionDetection();
+	                _this.lastCollisionDetectionTimeStamp = timestamp;
+	            }
 	            if (timestamp - _this.start > 1000 / 60) {
 	                _this.start = null;
 	                _this.engine.nextFrame();
@@ -674,6 +679,10 @@
 	    asteroidsGame.prototype.getRandomInt = function (min, max) {
 	        return Math.floor(Math.random() * (max - min + 1)) + min;
 	    };
+	    asteroidsGame.prototype.collisionDetection = function () {
+	        this.checkPlayerCollision();
+	        this.checkAsteroidCollision();
+	    };
 	    asteroidsGame.prototype.gameLogic = function () {
 	        // Decelerate
 	        this.deceleratePlayerShip();
@@ -683,13 +692,21 @@
 	        this.applyPlayerShipMovement();
 	        this.applyAsteroidsMovement();
 	        this.applyShotsMovement();
-	        // CheckCollision
-	        this.checkPlayerCollision();
 	    };
 	    asteroidsGame.prototype.checkPlayerCollision = function () {
 	        var isColliding = this.engine.detectCollision(this.player.Ship.objectId, this.asteroidsLayerId);
 	        if (isColliding) {
 	            this.player.gameOver = true;
+	        }
+	    };
+	    asteroidsGame.prototype.checkAsteroidCollision = function () {
+	        var isColliding = false, current;
+	        for (var i = 0; i < this.shots.length; i += 1) {
+	            current = this.shots[i];
+	            isColliding = false;
+	            isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
+	            if (isColliding) {
+	            }
 	        }
 	    };
 	    asteroidsGame.prototype.deceleratePlayerShip = function () {

@@ -13,6 +13,6 @@ export class basicAttack extends attack {
     constructor(id: number) {
         super(id, 'basicAttack')
 
-        this.maximumForwardSpeed = 0.222;
+        this.maximumForwardSpeed = 1;
     }
 }
