@@ -121,16 +121,22 @@
 	        return layers;
 	    };
 	    kineticGraphicsEngine.prototype.addShapes = function (type, id, layerId) {
-	        var newShape = this.shapesFactory.createShape(type);
+	        var newShape = this.shapesFactory.createShape(type), position;
 	        this.layers[layerId].add(newShape);
 	        this.shapes[id] = newShape;
+	        position = newShape.getPosition();
+	        return position;
 	    };
 	    kineticGraphicsEngine.prototype.destroyShape = function (id) {
 	    };
 	    kineticGraphicsEngine.prototype.rotateShape = function (id, degree) {
-	        this.shapes[id].rotate(degree);
+	        var currentAngleOfRotationInDegrees, shapeToRotate = this.shapes[id];
+	        shapeToRotate.rotate(degree);
+	        currentAngleOfRotationInDegrees = shapeToRotate.getRotation();
+	        return currentAngleOfRotationInDegrees % 360;
 	    };
-	    kineticGraphicsEngine.prototype.moveShape = function (id, speed, x, y) {
+	    kineticGraphicsEngine.prototype.moveShape = function (id, position) {
+	        this.shapes[id].setPosition({ x: position.x, y: position.y });
 	    };
 	    kineticGraphicsEngine.prototype.nextFrame = function () {
 	        for (var i = 0; i < this.layers.length; i += 1) {
@@ -184,13 +190,16 @@
 	    __extends(spaceShip, _super);
 	    function spaceShip(id) {
 	        _super.call(this, id, 'ship');
-	        // TODO: 
-	        this.yawAcceleration = 0.05;
-	        this.yawDeceleration = 0.01;
+	        this.forwardMotions = [];
 	        this.setStats();
 	    }
 	    spaceShip.prototype.setStats = function () {
 	        this.maximumYawSpeed = 5;
+	        this.yawAcceleration = 0.1;
+	        this.yawDeceleration = 0.025;
+	        this.maximumForwardSpeed = 0.033;
+	        this.forwardAcceleration = 0.05;
+	        this.forwardDeceleration = 0.0003;
 	    };
 	    spaceShip.prototype.increseYawSpeed = function () {
 	        this.yawSpeed += this.yawAcceleration;
@@ -218,6 +227,32 @@
 	            }
 	        }
 	    };
+	    spaceShip.prototype.createForwarMotion = function (forwardMotionToAdd) {
+	        forwardMotionToAdd.speed = this.maximumForwardSpeed;
+	        this.forwardMotions.filter(function (existingForwardMotion) {
+	            var result = existingForwardMotion.deltaX === forwardMotionToAdd.deltaX &&
+	                existingForwardMotion.deltaY === forwardMotionToAdd.deltaY;
+	            return !result;
+	        });
+	        this.forwardMotions.push(forwardMotionToAdd);
+	    };
+	    spaceShip.prototype.decelerateForwarMotions = function () {
+	        for (var i = 0; i < this.forwardMotions.length; i += 1) {
+	            this.forwardMotions[i].speed -= this.forwardDeceleration;
+	            if (this.forwardMotions[i].speed <= 0) {
+	                this.forwardMotions.splice(i, 1);
+	            }
+	        }
+	    };
+	    spaceShip.prototype.applyForwarMotions = function () {
+	        var currentMotion, currentPosition = this.position;
+	        for (var i = 0; i < this.forwardMotions.length; i += 1) {
+	            currentMotion = this.forwardMotions[i];
+	            currentPosition.x += currentMotion.deltaX * currentMotion.speed;
+	            currentPosition.y += currentMotion.deltaY * currentMotion.speed;
+	        }
+	        this.position = currentPosition;
+	    };
 	    return spaceShip;
 	}(space_object_1.spaceObject));
 	exports.spaceShip = spaceShip;
@@ -236,6 +271,14 @@
 	        this.objectId = id;
 	        this.type = type;
 	    }
+	    // x = cx + r * cos(a)
+	    // y = cy + r * sin(a)
+	    spaceObject.prototype.getForwardMotionDelta = function (rotationInDegrees) {
+	        var deltaX, deltaY, rotationInRadians = (rotationInDegrees - 90) * Math.PI / 180;
+	        deltaX = 10 * Math.cos(rotationInRadians);
+	        deltaY = 10 * Math.sin(rotationInRadians);
+	        return { deltaX: deltaX, deltaY: deltaY, speed: 0 };
+	    };
 	    return spaceObject;
 	}());
 	exports.spaceObject = spaceObject;
@@ -326,7 +369,7 @@
 	                _this.start = timestamp;
 	            }
 	            _this.gameLogic();
-	            if (timestamp - _this.start > 1000 / 30) {
+	            if (timestamp - _this.start > 1000 / 60) {
 	                _this.start = null;
 	                _this.engine.nextFrame();
 	            }
@@ -347,7 +390,8 @@
 	        configurable: true
 	    });
 	    asteroidsGame.prototype.Start = function () {
-	        this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
+	        this.player.Ship.position =
+	            this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
 	        window.requestAnimationFrame(this.run);
 	    };
 	    asteroidsGame.prototype.gameLogic = function () {
@@ -360,12 +404,20 @@
 	        if (this.controls.rotateRight) {
 	            this.player.Ship.increseYawSpeed();
 	        }
+	        if (this.controls.moveUp) {
+	            var delta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
+	            this.player.Ship.createForwarMotion(delta);
+	        }
 	        // Apply Rotation
-	        this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed);
+	        this.player.Ship.currentYawAngleInDegrees =
+	            this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed);
 	        // Apply Forward movement
+	        this.player.Ship.applyForwarMotions();
+	        this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
 	    };
 	    asteroidsGame.prototype.deceleratePlayerShip = function () {
 	        this.player.Ship.decelerateYawSpeed();
+	        this.player.Ship.decelerateForwarMotions();
 	    };
 	    return asteroidsGame;
 	}());

@@ -1,4 +1,4 @@
-import {graphics} from '../contracts/igraphics';
+import {graphics, canvasPosition} from '../contracts/igraphics';
 import {shapesFactory} from '../contracts/shapes-factory';
 
 interface stageOptions {
@@ -43,9 +43,13 @@ export class kineticGraphicsEngine implements graphics {
     }
 
     public addShapes(type: string, id: number, layerId: number) {
-        var newShape: Kinetic.IShape = this.shapesFactory.createShape(type);
+        var newShape: Kinetic.IShape = this.shapesFactory.createShape(type),
+            position: canvasPosition;
         this.layers[layerId].add(newShape);
         this.shapes[id] = newShape;
+
+        position = newShape.getPosition();
+        return position;
     }
 
     public destroyShape(id: number) {
@@ -53,11 +57,17 @@ export class kineticGraphicsEngine implements graphics {
     }
 
     public rotateShape(id: number, degree: number) {
-        this.shapes[id].rotate(degree);
+        var currentAngleOfRotationInDegrees: number,
+            shapeToRotate = this.shapes[id];
+
+        shapeToRotate.rotate(degree);
+        currentAngleOfRotationInDegrees = shapeToRotate.getRotation();
+
+        return currentAngleOfRotationInDegrees % 360;
     }
 
-    public moveShape(id: number, speed: number, x: number, y: number) {
-
+    public moveShape(id: number, position: canvasPosition) {
+        this.shapes[id].setPosition({ x: position.x, y: position.y });
     }
 
     public nextFrame() {

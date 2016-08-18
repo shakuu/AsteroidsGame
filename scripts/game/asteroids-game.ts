@@ -31,7 +31,8 @@ export class asteroidsGame {
     }
 
     public Start() {
-        this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
+        this.player.Ship.position =
+            this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
         window.requestAnimationFrame(this.run);
     }
 
@@ -42,7 +43,7 @@ export class asteroidsGame {
         }
 
         this.gameLogic();
-        if (timestamp - this.start > 1000 / 30) {
+        if (timestamp - this.start > 1000 / 60) {
             this.start = null;
             this.engine.nextFrame();
             // DELETE ThIS
@@ -67,13 +68,22 @@ export class asteroidsGame {
             this.player.Ship.increseYawSpeed();
         }
 
+        if (this.controls.moveUp) {
+            var delta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
+            this.player.Ship.createForwarMotion(delta);
+        }
+
         // Apply Rotation
-        this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed)
+        this.player.Ship.currentYawAngleInDegrees =
+            this.engine.rotateShape(this.player.Ship.objectId, this.player.Ship.yawSpeed)
 
         // Apply Forward movement
+        this.player.Ship.applyForwarMotions();
+        this.engine.moveShape(this.player.Ship.objectId, this.player.Ship.position);
     }
 
     private deceleratePlayerShip() {
         this.player.Ship.decelerateYawSpeed();
+        this.player.Ship.decelerateForwarMotions();
     }
 }
