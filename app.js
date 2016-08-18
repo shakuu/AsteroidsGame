@@ -487,6 +487,9 @@
 	    function asteroidsGameCommands() {
 	        this.createShip = 'ship';
 	        this.createBasicAttack = 'basicAttack';
+	        this.createLargeAsteroid = 'largeAsteroid';
+	        this.createMediumAsteroid = 'mediumAsteroid';
+	        this.createSmallAsteroid = 'smallAsteroid';
 	    }
 	    return asteroidsGameCommands;
 	}());
