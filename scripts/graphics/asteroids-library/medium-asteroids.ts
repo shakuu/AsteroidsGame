@@ -13,8 +13,8 @@ export function createMediumAsteroidTypeOne() {
             30, 0
         ],
         closed: true,
-        // width: 80,
-        // height: 80,
+        width: 80,
+        height: 80,
         stroke: 'yellowgreen',
         fill: 'transparent',
         offset: { x: 40, y: 40 }

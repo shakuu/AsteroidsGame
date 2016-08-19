@@ -681,8 +681,8 @@
 	            30, 0
 	        ],
 	        closed: true,
-	        // width: 80,
-	        // height: 80,
+	        width: 80,
+	        height: 80,
 	        stroke: 'yellowgreen',
 	        fill: 'transparent',
 	        offset: { x: 40, y: 40 }
@@ -710,8 +710,8 @@
 	            0, 0
 	        ],
 	        closed: true,
-	        // width: 40,
-	        // height: 40,
+	        width: 40,
+	        height: 40,
 	        stroke: 'yellowgreen',
 	        fill: 'transparent',
 	        offset: { x: 20, y: 20 }
@@ -769,6 +769,9 @@
 	                var position = _this.getRandomAsteroidPosition(_this.player.Ship.position);
 	                _this.createNewAsteroid(_this.commands.createLargeAsteroid, position);
 	                _this.asteroidSpawnTimestamp = timestamp;
+	                _this.asteroidSpawnInterval = _this.asteroidSpawnInterval > 5000 ?
+	                    _this.asteroidSpawnInterval - 2500 : 5000;
+	                console.log(_this.asteroidSpawnInterval);
 	            }
 	            _this.gameLogic();
 	            // Collision detection interval, affects performance

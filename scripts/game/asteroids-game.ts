@@ -95,7 +95,7 @@ export class asteroidsGame {
 
     private getRandomAsteroidPosition(shipPosition: canvasPosition) {
         var stage = this.engine.getStageOptions();
-        
+
         var newPosition = {
             x: stage.width - shipPosition.x,
             y: stage.height - shipPosition.y
@@ -106,7 +106,7 @@ export class asteroidsGame {
 
     private createNewAsteroid(type: string, position: canvasPosition) {
         var newAsteroid = this.factory.createObject(type);
-       
+
         newAsteroid.position = {
             x: position.x,
             y: position.y
@@ -143,7 +143,11 @@ export class asteroidsGame {
             var position = this.getRandomAsteroidPosition(this.player.Ship.position);
             this.createNewAsteroid(this.commands.createLargeAsteroid, position);
 
-            this.asteroidSpawnTimestamp = timestamp;            
+            this.asteroidSpawnTimestamp = timestamp;
+            this.asteroidSpawnInterval = this.asteroidSpawnInterval > 5000 ?
+                this.asteroidSpawnInterval - 2500 : 5000;
+
+                console.log(this.asteroidSpawnInterval);
         }
 
         this.gameLogic();

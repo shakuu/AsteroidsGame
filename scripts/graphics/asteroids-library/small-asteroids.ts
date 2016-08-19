@@ -11,8 +11,8 @@ export function createSmallAsteroidTypeOne() {
             0, 0
         ],
         closed: true,
-        // width: 40,
-        // height: 40,
+        width: 40,
+        height: 40,
         stroke: 'yellowgreen',
         fill: 'transparent',
         offset: { x: 20, y: 20 }
