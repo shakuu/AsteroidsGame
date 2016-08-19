@@ -142,16 +142,30 @@ export class asteroidsGame {
     }
 
     private checkAsteroidCollision() {
-        var isColliding = false,
+        var isColliding: Kinetic.IShape,
             current: attack;
 
         for (var i = 0; i < this.shots.length; i += 1) {
             current = this.shots[i];
-            isColliding = false;
+            isColliding = null;
             isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
 
             if (isColliding) {
+                // TEST PRINT DELETE
                 console.log(isColliding);
+
+                // Get ID
+
+                // Destroy shapes
+
+                // Destroy object
+
+                // Increment Score
+
+                // Create New Asteroids
+
+                isColliding.remove();
+                isColliding.destroy();
 
                 this.engine.destroyShape(current.objectId);
                 this.shots.splice(i, 1);

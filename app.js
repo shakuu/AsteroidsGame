@@ -702,13 +702,21 @@
 	        }
 	    };
 	    asteroidsGame.prototype.checkAsteroidCollision = function () {
-	        var isColliding = false, current;
+	        var isColliding, current;
 	        for (var i = 0; i < this.shots.length; i += 1) {
 	            current = this.shots[i];
-	            isColliding = false;
+	            isColliding = null;
 	            isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
 	            if (isColliding) {
+	                // TEST PRINT DELETE
 	                console.log(isColliding);
+	                // Get ID
+	                // Destroy shapes
+	                // Destroy object
+	                // Increment Score
+	                // Create New Asteroids
+	                isColliding.remove();
+	                isColliding.destroy();
 	                this.engine.destroyShape(current.objectId);
 	                this.shots.splice(i, 1);
 	                i -= 1;
