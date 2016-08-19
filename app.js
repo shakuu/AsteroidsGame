@@ -752,6 +752,8 @@
 	        this.shipCanShoot = false;
 	        this.asteroidSpawnTimestamp = 0;
 	        this.asteroidSpawnInterval = 20000;
+	        this.asteroidSpawnIntervamMinimumValue = 5000;
+	        this.asteroidSpawnIntervalDecreasingStep = 2500;
 	        this.lastCollisionDetectionTimeStamp = 0;
 	        this.run = function (timestamp) {
 	            _this.currentTimestamp = timestamp;
@@ -769,9 +771,8 @@
 	                var position = _this.getRandomAsteroidPosition(_this.player.Ship.position);
 	                _this.createNewAsteroid(_this.commands.createLargeAsteroid, position);
 	                _this.asteroidSpawnTimestamp = timestamp;
-	                _this.asteroidSpawnInterval = _this.asteroidSpawnInterval > 5000 ?
-	                    _this.asteroidSpawnInterval - 2500 : 5000;
-	                console.log(_this.asteroidSpawnInterval);
+	                _this.asteroidSpawnInterval = _this.asteroidSpawnInterval > _this.asteroidSpawnIntervamMinimumValue ?
+	                    _this.asteroidSpawnInterval - _this.asteroidSpawnIntervalDecreasingStep : _this.asteroidSpawnIntervamMinimumValue;
 	            }
 	            _this.gameLogic();
 	            // Collision detection interval, affects performance

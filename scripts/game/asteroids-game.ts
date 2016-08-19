@@ -53,6 +53,8 @@ export class asteroidsGame {
 
     private asteroidSpawnTimestamp: number = 0;
     private asteroidSpawnInterval: number = 20000;
+    private asteroidSpawnIntervamMinimumValue: number = 5000;
+    private asteroidSpawnIntervalDecreasingStep: number = 2500;
 
     private lastCollisionDetectionTimeStamp: number = 0;
 
@@ -144,10 +146,8 @@ export class asteroidsGame {
             this.createNewAsteroid(this.commands.createLargeAsteroid, position);
 
             this.asteroidSpawnTimestamp = timestamp;
-            this.asteroidSpawnInterval = this.asteroidSpawnInterval > 5000 ?
-                this.asteroidSpawnInterval - 2500 : 5000;
-
-                console.log(this.asteroidSpawnInterval);
+            this.asteroidSpawnInterval = this.asteroidSpawnInterval > this.asteroidSpawnIntervamMinimumValue ?
+                this.asteroidSpawnInterval - this.asteroidSpawnIntervalDecreasingStep : this.asteroidSpawnIntervamMinimumValue;
         }
 
         this.gameLogic();
