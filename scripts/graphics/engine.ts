@@ -50,6 +50,7 @@ export class kineticGraphicsEngine implements graphics {
             position: canvasPosition;
         this.layers[layerId].add(newShape);
         this.shapes[id] = newShape;
+        newShape.setId(id + '');
 
         position = newShape.getPosition();
         return position;

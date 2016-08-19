@@ -6,6 +6,11 @@ import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
 import {basicAttack, attack} from '../models/ship-attacks';
 
+interface createNewAsteroidsOnKillOptions {
+    numberOfNewAsteroids: number;
+    typeOfNewAsteroidsCommand: string;
+}
+
 export interface gameCommands {
     createShip: string;
     createBasicAttack: string;
@@ -33,6 +38,9 @@ export class asteroidsGame {
     private asteroids: asteroid[] = [];
     private shots: attack[] = [];
 
+    private lastKilledAsteroidReward: number = 0;
+    private lastKilledAsteroidSize: number = 0;
+
     private shipLayerId = 0;
     private asteroidsLayerId = 1;
     private shotsLayerId = 2;
@@ -44,6 +52,7 @@ export class asteroidsGame {
     private shipCanShoot: boolean = false;
 
     private lastCollisionDetectionTimeStamp: number = 0;
+
 
     constructor(engine: graphics, player: player, controls: IControls, factory: objectFactory, commands: gameCommands) {
         this.engine = engine;
@@ -152,18 +161,18 @@ export class asteroidsGame {
 
             if (isColliding) {
                 // TEST PRINT DELETE
-                console.log(isColliding);
+                console.log(this.player.Score);
 
-                // Get ID
+                var collidingShapeObjectId = +isColliding.getId();
+                this.removeShapeWithObjectId(collidingShapeObjectId);
 
-                // Destroy shapes
-
-                // Destroy object
-
-                // Increment Score
+                this.player.Score += this.lastKilledAsteroidReward;
 
                 // Create New Asteroids
 
+                this.createNewAsteroid(this.commands.createLargeAsteroid);
+
+                // Destroy Shot
                 isColliding.remove();
                 isColliding.destroy();
 
@@ -172,6 +181,42 @@ export class asteroidsGame {
                 i -= 1;
             }
         }
+    }
+
+    private getCreateNewAsteroidsAfterKillOptions(killedAsteroidSize: number): createNewAsteroidsOnKillOptions {
+        var options: createNewAsteroidsOnKillOptions,
+            numberOfNewAsteroids = 0,
+            typeOfAsteroidCommand = '';
+
+        if (this.lastKilledAsteroidSize === 3) {
+
+            numberOfNewAsteroids = 3;
+            typeOfAsteroidCommand = this.commands.createMediumAsteroid;
+
+        } else if (this.lastKilledAsteroidSize == 2) {
+
+            numberOfNewAsteroids = 4;
+            typeOfAsteroidCommand = this.commands.createSmallAsteroid;
+
+        }
+
+        options.numberOfNewAsteroids = numberOfNewAsteroids;
+        options.typeOfNewAsteroidsCommand = typeOfAsteroidCommand;
+        return options;
+    }
+
+    private removeShapeWithObjectId(id: number) {
+        this.asteroids.filter((asteroid) => {
+            var keepAsteroid = true;
+            
+            if (asteroid.objectId === id) {
+                this.lastKilledAsteroidReward = asteroid.Reward;
+                this.lastKilledAsteroidSize = asteroid.Size;
+                keepAsteroid = false;
+            }
+
+            return keepAsteroid;
+        });
     }
 
     private deceleratePlayerShip() {

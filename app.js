@@ -126,6 +126,7 @@
 	        var newShape = this.shapesFactory.createShape(type), position;
 	        this.layers[layerId].add(newShape);
 	        this.shapes[id] = newShape;
+	        newShape.setId(id + '');
 	        position = newShape.getPosition();
 	        return position;
 	    };
@@ -270,6 +271,7 @@
 	    function asteroid(id, size, pointsReward, type) {
 	        _super.call(this, id, type);
 	        this.size = size;
+	        this.reward = pointsReward;
 	    }
 	    Object.defineProperty(asteroid.prototype, "Reward", {
 	        get: function () {
@@ -508,6 +510,9 @@
 	        get: function () {
 	            return this.score;
 	        },
+	        set: function (score) {
+	            this.score = score;
+	        },
 	        enumerable: true,
 	        configurable: true
 	    });
@@ -617,6 +622,8 @@
 	        var _this = this;
 	        this.asteroids = [];
 	        this.shots = [];
+	        this.lastKilledAsteroidReward = 0;
+	        this.lastKilledAsteroidSize = 0;
 	        this.shipLayerId = 0;
 	        this.asteroidsLayerId = 1;
 	        this.shotsLayerId = 2;
@@ -709,12 +716,13 @@
 	            isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
 	            if (isColliding) {
 	                // TEST PRINT DELETE
-	                console.log(isColliding);
-	                // Get ID
-	                // Destroy shapes
-	                // Destroy object
-	                // Increment Score
+	                console.log(this.player.Score);
+	                var collidingShapeObjectId = +isColliding.getId();
+	                this.removeShapeWithObjectId(collidingShapeObjectId);
+	                this.player.Score += this.lastKilledAsteroidReward;
 	                // Create New Asteroids
+	                this.createNewAsteroid(this.commands.createLargeAsteroid);
+	                // Destroy Shot
 	                isColliding.remove();
 	                isColliding.destroy();
 	                this.engine.destroyShape(current.objectId);
@@ -722,6 +730,32 @@
 	                i -= 1;
 	            }
 	        }
+	    };
+	    asteroidsGame.prototype.getCreateNewAsteroidsAfterKillOptions = function (killedAsteroidSize) {
+	        var options, numberOfNewAsteroids = 0, typeOfAsteroidCommand = '';
+	        if (this.lastKilledAsteroidSize === 3) {
+	            numberOfNewAsteroids = 3;
+	            typeOfAsteroidCommand = this.commands.createMediumAsteroid;
+	        }
+	        else if (this.lastKilledAsteroidSize == 2) {
+	            numberOfNewAsteroids = 4;
+	            typeOfAsteroidCommand = this.commands.createSmallAsteroid;
+	        }
+	        options.numberOfNewAsteroids = numberOfNewAsteroids;
+	        options.typeOfNewAsteroidsCommand = typeOfAsteroidCommand;
+	        return options;
+	    };
+	    asteroidsGame.prototype.removeShapeWithObjectId = function (id) {
+	        var _this = this;
+	        this.asteroids.filter(function (asteroid) {
+	            var keepAsteroid = true;
+	            if (asteroid.objectId === id) {
+	                _this.lastKilledAsteroidReward = asteroid.Reward;
+	                _this.lastKilledAsteroidSize = asteroid.Size;
+	                keepAsteroid = false;
+	            }
+	            return keepAsteroid;
+	        });
 	    };
 	    asteroidsGame.prototype.deceleratePlayerShip = function () {
 	        this.player.Ship.decelerateYawSpeed();

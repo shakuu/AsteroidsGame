@@ -7,6 +7,7 @@ export class asteroid extends spaceObject {
     constructor(id: number, size: number, pointsReward: number, type: string) {
         super(id, type);
         this.size = size;
+        this.reward = pointsReward;
     }
 
     public get Reward() {
