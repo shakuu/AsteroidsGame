@@ -40,10 +40,11 @@ function CreateLargeAsteroidTypeOne() {
             0, 40,
             40, 0
         ],
+        closed: true,
         // width: 160,
         // height: 160,
         stroke: 'yellowgreen',
-        fill: 'yellowgreen',
+        fill: 'transparent',
         offset: { x: 80, y: 80 }
     });
 
@@ -58,7 +59,8 @@ function createShipShape(): Kinetic.IShape {
         // width: 20,
         // height: 40,
         stroke: 'yellowgreen',
-        fill: 'yellowgreen',
+        closed: true,
+        fill: 'transparent',
         offset: { x: 10, y: 20 }
     });
 

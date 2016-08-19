@@ -151,8 +151,11 @@ export class asteroidsGame {
             isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
 
             if (isColliding) {
-                // split
-                // console.log(isColliding);
+                console.log(isColliding);
+
+                this.engine.destroyShape(current.objectId);
+                this.shots.splice(i, 1);
+                i -= 1;
             }
         }
     }

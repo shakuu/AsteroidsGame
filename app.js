@@ -557,10 +557,11 @@
 	            0, 40,
 	            40, 0
 	        ],
+	        closed: true,
 	        // width: 160,
 	        // height: 160,
 	        stroke: 'yellowgreen',
-	        fill: 'yellowgreen',
+	        fill: 'transparent',
 	        offset: { x: 80, y: 80 }
 	    });
 	    return newShape;
@@ -573,7 +574,8 @@
 	        // width: 20,
 	        // height: 40,
 	        stroke: 'yellowgreen',
-	        fill: 'yellowgreen',
+	        closed: true,
+	        fill: 'transparent',
 	        offset: { x: 10, y: 20 }
 	    });
 	    return newShape;
@@ -706,6 +708,10 @@
 	            isColliding = false;
 	            isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
 	            if (isColliding) {
+	                console.log(isColliding);
+	                this.engine.destroyShape(current.objectId);
+	                this.shots.splice(i, 1);
+	                i -= 1;
 	            }
 	        }
 	    };
