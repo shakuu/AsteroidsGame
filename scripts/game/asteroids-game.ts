@@ -76,7 +76,7 @@ export class asteroidsGame {
     }
 
     private createNewAsteroid(type: string) {
-        var newAsteroid = this.factory.createObject(this.commands.createLargeAsteroid);
+        var newAsteroid = this.factory.createObject(type);
         newAsteroid.position =
             this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, this.asteroidsLayerId);
 
@@ -160,17 +160,16 @@ export class asteroidsGame {
             isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
 
             if (isColliding) {
-                // TEST PRINT DELETE
-                console.log(this.player.Score);
-
                 var collidingShapeObjectId = +isColliding.getId();
                 this.removeShapeWithObjectId(collidingShapeObjectId);
 
                 this.player.Score += this.lastKilledAsteroidReward;
+               
+                var newAsteroidsOptions = this.getCreateNewAsteroidsAfterKillOptions(this.lastKilledAsteroidSize);
+                for (var j = 0; j < newAsteroidsOptions.numberOfNewAsteroids; j += 1) {
 
-                // Create New Asteroids
-
-                this.createNewAsteroid(this.commands.createLargeAsteroid);
+                    this.createNewAsteroid(newAsteroidsOptions.typeOfNewAsteroidsCommand);
+                }
 
                 // Destroy Shot
                 isColliding.remove();
@@ -198,17 +197,24 @@ export class asteroidsGame {
             numberOfNewAsteroids = 4;
             typeOfAsteroidCommand = this.commands.createSmallAsteroid;
 
+        } else {
+
+            numberOfNewAsteroids = 0;
+            typeOfAsteroidCommand = null;
         }
 
-        options.numberOfNewAsteroids = numberOfNewAsteroids;
-        options.typeOfNewAsteroidsCommand = typeOfAsteroidCommand;
+        options = {
+            numberOfNewAsteroids: numberOfNewAsteroids,
+            typeOfNewAsteroidsCommand: typeOfAsteroidCommand
+        };
+
         return options;
     }
 
     private removeShapeWithObjectId(id: number) {
         this.asteroids.filter((asteroid) => {
             var keepAsteroid = true;
-            
+
             if (asteroid.objectId === id) {
                 this.lastKilledAsteroidReward = asteroid.Reward;
                 this.lastKilledAsteroidSize = asteroid.Size;

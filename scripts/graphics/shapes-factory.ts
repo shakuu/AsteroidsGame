@@ -1,5 +1,6 @@
 import {shapesFactory as interfaceFactory} from '../contracts/shapes-factory';
-
+import {createLargeAsteroidTypeOne} from './asteroids-library/large-asteroids'
+import {createMediumAsteroidTypeOne} from './asteroids-library/medium-asteroids';
 export class shapesFactory implements interfaceFactory {
 
     constructor() {
@@ -17,7 +18,13 @@ export class shapesFactory implements interfaceFactory {
                 newShape = createBasicAttackShape();
                 break;
             case 'largeAsteroid':
-                newShape = CreateLargeAsteroidTypeOne();
+                newShape = createLargeAsteroid();
+                break;
+            case 'mediumAsteroid':
+                newShape = createLargeAsteroidTypeOne();
+                break;
+            case 'smallAsteroid':
+                newShape = createLargeAsteroidTypeOne();
                 break;
         }
 
@@ -25,28 +32,18 @@ export class shapesFactory implements interfaceFactory {
     }
 }
 
-function CreateLargeAsteroidTypeOne() {
-    // 160x160
-    var newShape = new Kinetic.Line({
-        x: 200,
-        y: 200,
-        points: [
-            40, 0,
-            80, 0,
-            160, 20,
-            160, 80,
-            40, 160,
-            0, 120,
-            0, 40,
-            40, 0
-        ],
-        closed: true,
-        // width: 160,
-        // height: 160,
-        stroke: 'yellowgreen',
-        fill: 'transparent',
-        offset: { x: 80, y: 80 }
-    });
+function createLargeAsteroid(): Kinetic.IShape {
+    var newShape: Kinetic.IShape,
+        typeNr = getRandomInt(1, 1);
+
+    switch (typeNr) {
+        case 1:
+            newShape = createLargeAsteroidTypeOne();
+            break;
+        default:
+            newShape = createLargeAsteroidTypeOne();
+            break;
+    }
 
     return newShape;
 }
@@ -81,4 +78,8 @@ function createBasicAttackShape() {
     });
 
     return newShape;
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

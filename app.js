@@ -68,8 +68,8 @@
 	var objects_factory_1 = __webpack_require__(3);
 	var player_1 = __webpack_require__(8);
 	var shapes_factory_1 = __webpack_require__(9);
-	var asteroids_game_1 = __webpack_require__(10);
-	var controls_1 = __webpack_require__(11);
+	var asteroids_game_1 = __webpack_require__(11);
+	var controls_1 = __webpack_require__(12);
 	function createGame() {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
@@ -523,9 +523,10 @@
 
 /***/ },
 /* 9 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var large_asteroids_1 = __webpack_require__(10);
 	var shapesFactory = (function () {
 	    function shapesFactory() {
 	    }
@@ -539,7 +540,13 @@
 	                newShape = createBasicAttackShape();
 	                break;
 	            case 'largeAsteroid':
-	                newShape = CreateLargeAsteroidTypeOne();
+	                newShape = createLargeAsteroid();
+	                break;
+	            case 'mediumAsteroid':
+	                newShape = large_asteroids_1.createLargeAsteroidTypeOne();
+	                break;
+	            case 'smallAsteroid':
+	                newShape = large_asteroids_1.createLargeAsteroidTypeOne();
 	                break;
 	        }
 	        return newShape;
@@ -547,28 +554,16 @@
 	    return shapesFactory;
 	}());
 	exports.shapesFactory = shapesFactory;
-	function CreateLargeAsteroidTypeOne() {
-	    // 160x160
-	    var newShape = new Kinetic.Line({
-	        x: 200,
-	        y: 200,
-	        points: [
-	            40, 0,
-	            80, 0,
-	            160, 20,
-	            160, 80,
-	            40, 160,
-	            0, 120,
-	            0, 40,
-	            40, 0
-	        ],
-	        closed: true,
-	        // width: 160,
-	        // height: 160,
-	        stroke: 'yellowgreen',
-	        fill: 'transparent',
-	        offset: { x: 80, y: 80 }
-	    });
+	function createLargeAsteroid() {
+	    var newShape, typeNr = getRandomInt(1, 1);
+	    switch (typeNr) {
+	        case 1:
+	            newShape = large_asteroids_1.createLargeAsteroidTypeOne();
+	            break;
+	        default:
+	            newShape = large_asteroids_1.createLargeAsteroidTypeOne();
+	            break;
+	    }
 	    return newShape;
 	}
 	function createShipShape() {
@@ -599,10 +594,45 @@
 	    });
 	    return newShape;
 	}
+	function getRandomInt(min, max) {
+	    return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
 
 
 /***/ },
 /* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function createLargeAsteroidTypeOne() {
+	    // 160x160
+	    var newShape = new Kinetic.Line({
+	        x: 200,
+	        y: 200,
+	        points: [
+	            40, 0,
+	            80, 0,
+	            160, 20,
+	            160, 80,
+	            40, 160,
+	            0, 120,
+	            0, 40,
+	            40, 0
+	        ],
+	        closed: true,
+	        // width: 160,
+	        // height: 160,
+	        stroke: 'yellowgreen',
+	        fill: 'transparent',
+	        offset: { x: 80, y: 80 }
+	    });
+	    return newShape;
+	}
+	exports.createLargeAsteroidTypeOne = createLargeAsteroidTypeOne;
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -677,7 +707,7 @@
 	        window.requestAnimationFrame(this.run);
 	    };
 	    asteroidsGame.prototype.createNewAsteroid = function (type) {
-	        var newAsteroid = this.factory.createObject(this.commands.createLargeAsteroid);
+	        var newAsteroid = this.factory.createObject(type);
 	        newAsteroid.position =
 	            this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, this.asteroidsLayerId);
 	        var angle = this.getRandomInt(0, 360);
@@ -715,13 +745,13 @@
 	            isColliding = null;
 	            isColliding = this.engine.detectCollision(current.objectId, this.asteroidsLayerId);
 	            if (isColliding) {
-	                // TEST PRINT DELETE
-	                console.log(this.player.Score);
 	                var collidingShapeObjectId = +isColliding.getId();
 	                this.removeShapeWithObjectId(collidingShapeObjectId);
 	                this.player.Score += this.lastKilledAsteroidReward;
-	                // Create New Asteroids
-	                this.createNewAsteroid(this.commands.createLargeAsteroid);
+	                var newAsteroidsOptions = this.getCreateNewAsteroidsAfterKillOptions(this.lastKilledAsteroidSize);
+	                for (var j = 0; j < newAsteroidsOptions.numberOfNewAsteroids; j += 1) {
+	                    this.createNewAsteroid(newAsteroidsOptions.typeOfNewAsteroidsCommand);
+	                }
 	                // Destroy Shot
 	                isColliding.remove();
 	                isColliding.destroy();
@@ -741,8 +771,14 @@
 	            numberOfNewAsteroids = 4;
 	            typeOfAsteroidCommand = this.commands.createSmallAsteroid;
 	        }
-	        options.numberOfNewAsteroids = numberOfNewAsteroids;
-	        options.typeOfNewAsteroidsCommand = typeOfAsteroidCommand;
+	        else {
+	            numberOfNewAsteroids = 0;
+	            typeOfAsteroidCommand = null;
+	        }
+	        options = {
+	            numberOfNewAsteroids: numberOfNewAsteroids,
+	            typeOfNewAsteroidsCommand: typeOfAsteroidCommand
+	        };
 	        return options;
 	    };
 	    asteroidsGame.prototype.removeShapeWithObjectId = function (id) {
@@ -817,7 +853,7 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
