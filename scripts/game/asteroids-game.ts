@@ -5,6 +5,7 @@ import {asteroid, largeAsteroid, mediumAsteroid, smallAsteroid} from '../models/
 import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
 import {basicAttack, attack} from '../models/ship-attacks';
+import {gameUi} from '../ui/jquery-ui';
 
 interface createNewAsteroidsOnKillOptions {
     numberOfNewAsteroids: number;
@@ -33,6 +34,7 @@ export class asteroidsGame {
     private engine: graphics;
     private factory: objectFactory;
     private controls: IControls;
+    private gameUi: gameUi;
 
     private player: player;
     private asteroids: asteroid[] = [];
@@ -58,19 +60,37 @@ export class asteroidsGame {
 
     private lastCollisionDetectionTimeStamp: number = 0;
 
-    constructor(engine: graphics, player: player, controls: IControls, factory: objectFactory, commands: gameCommands) {
+    constructor(engine: graphics,
+        player: player,
+        controls: IControls,
+        factory: objectFactory,
+        commands: gameCommands,
+        gameUi: gameUi) {
+
         this.engine = engine;
         this.player = player;
         this.factory = factory;
         this.controls = controls;
         this.commands = commands;
+        this.gameUi = gameUi;
     }
 
     public get Controls() {
         return this.controls;
     }
 
-    public Start() {
+    public displayMainScreen(){
+        this.player.gameOver = false;
+        this.gameUi.displayMainScreen(this.Start);
+    }
+
+    public onStartBtnClick(){
+        
+    }
+
+    public Start = () => {
+        this.gameUi.displayGameScreen(this.controls.evaluateKeyDown, this.controls.evaluateKeyUp);
+
         this.player.Ship.position = this.getInitialShipPosition();
 
         this.engine.addShapes(
@@ -129,7 +149,7 @@ export class asteroidsGame {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    public run = (timestamp) => {
+    private run = (timestamp) => {
         this.currentTimestamp = timestamp;
 
         if (!this.start) {
@@ -170,6 +190,7 @@ export class asteroidsGame {
             window.requestAnimationFrame(this.run);
         } else {
             this.gameOver();
+            this.player.gameOver = false;
         }
 
         if (this.controls.pause) {

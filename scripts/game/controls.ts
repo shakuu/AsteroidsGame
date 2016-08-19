@@ -18,15 +18,15 @@ export class keyboardControls implements IControls {
     shoot: boolean = false;
     pause: boolean;
 
-    evaluateKeyDown(keyCode: number) {
+    evaluateKeyDown = (keyCode: number) => {
         this.setValue(keyCode, true);
     }
 
-    evaluateKeyUp(keyCode: number) {
+    evaluateKeyUp = (keyCode: number) => {
         this.setValue(keyCode, false);
     }
 
-    private setValue(keyCode: number, value: boolean) {
+    private setValue = (keyCode: number, value: boolean) => {
         switch (keyCode) {
             case 37:
                 this.rotateLeft = value;

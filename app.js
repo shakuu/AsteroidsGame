@@ -47,34 +47,8 @@
 	"use strict";
 	var create_game_1 = __webpack_require__(1);
 	$(function () {
-	    var asteroids, score;
-	    $('<a />')
-	        .addClass('start-button')
-	        .appendTo('#game')
-	        .html('START')
-	        .on('click', function () {
-	        if (!asteroids) {
-	            score = 0;
-	            score = startGame();
-	        }
-	    });
-	    function startGame() {
-	        var root = $(':root');
-	        asteroids = create_game_1.createGame();
-	        root.on('keyup', handleKeyUp);
-	        root.on('keydown', handleKeyDown);
-	        function handleKeyDown(event) {
-	            event.preventDefault();
-	            asteroids.Controls.evaluateKeyDown(event.keyCode);
-	        }
-	        function handleKeyUp(event) {
-	            event.preventDefault();
-	            asteroids.Controls.evaluateKeyUp(event.keyCode);
-	        }
-	        var result = asteroids.Start();
-	        console.log(result);
-	        return result;
-	    }
+	    var asteroids = create_game_1.createGame();
+	    asteroids.displayMainScreen();
 	});
 
 
@@ -89,6 +63,7 @@
 	var shapes_factory_1 = __webpack_require__(9);
 	var asteroids_game_1 = __webpack_require__(13);
 	var controls_1 = __webpack_require__(14);
+	var jquery_ui_1 = __webpack_require__(15);
 	function createGame() {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
@@ -98,11 +73,12 @@
 	        height: 540
 	    };
 	    var gameCommands = new asteroids_game_1.asteroidsGameCommands();
+	    var gameUi = new jquery_ui_1.jqueryGameUi('#game');
 	    var engine = new engine_1.kineticGraphicsEngine(stageOptions, 3, shapeFactory);
 	    var ship = factory.createObject(gameCommands.createShip);
 	    var playerOne = new player_1.player(ship, 'player one');
 	    var controls = new controls_1.keyboardControls();
-	    var game = new asteroids_game_1.asteroidsGame(engine, playerOne, controls, factory, gameCommands);
+	    var game = new asteroids_game_1.asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
 	    console.log('it works');
 	    return game;
 	}
@@ -230,6 +206,7 @@
 	    };
 	    kineticGraphicsEngine.prototype.destroy = function () {
 	        for (var i = 0; i < this.layers.length; i += 1) {
+	            this.layers[i].removeChildren();
 	            this.layers[i].clear();
 	        }
 	    };
@@ -762,7 +739,7 @@
 	}());
 	exports.asteroidsGameCommands = asteroidsGameCommands;
 	var asteroidsGame = (function () {
-	    function asteroidsGame(engine, player, controls, factory, commands) {
+	    function asteroidsGame(engine, player, controls, factory, commands, gameUi) {
 	        var _this = this;
 	        this.asteroids = [];
 	        this.shots = [];
@@ -779,6 +756,15 @@
 	        this.asteroidSpawnIntervamMinimumValue = 5000;
 	        this.asteroidSpawnIntervalDecreasingStep = 2500;
 	        this.lastCollisionDetectionTimeStamp = 0;
+	        this.Start = function () {
+	            _this.gameUi.displayGameScreen(_this.controls.evaluateKeyDown, _this.controls.evaluateKeyUp);
+	            _this.player.Ship.position = _this.getInitialShipPosition();
+	            _this.engine.addShapes(_this.player.Ship.type, _this.player.Ship.objectId, _this.player.Ship.position, _this.shipLayerId);
+	            _this.createNewAsteroid(_this.commands.createLargeAsteroid, { x: 200, y: 200 });
+	            _this.createNewAsteroid(_this.commands.createLargeAsteroid, { x: 700, y: 360 });
+	            window.requestAnimationFrame(_this.run);
+	            return _this.player.Score;
+	        };
 	        this.run = function (timestamp) {
 	            _this.currentTimestamp = timestamp;
 	            if (!_this.start) {
@@ -814,6 +800,7 @@
 	            }
 	            else {
 	                _this.gameOver();
+	                _this.player.gameOver = false;
 	            }
 	            if (_this.controls.pause) {
 	                _this.gameOver();
@@ -824,6 +811,7 @@
 	        this.factory = factory;
 	        this.controls = controls;
 	        this.commands = commands;
+	        this.gameUi = gameUi;
 	    }
 	    Object.defineProperty(asteroidsGame.prototype, "Controls", {
 	        get: function () {
@@ -832,13 +820,11 @@
 	        enumerable: true,
 	        configurable: true
 	    });
-	    asteroidsGame.prototype.Start = function () {
-	        this.player.Ship.position = this.getInitialShipPosition();
-	        this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.player.Ship.position, this.shipLayerId);
-	        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 200, y: 200 });
-	        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 700, y: 360 });
-	        window.requestAnimationFrame(this.run);
-	        return this.player.Score;
+	    asteroidsGame.prototype.displayMainScreen = function () {
+	        this.player.gameOver = false;
+	        this.gameUi.displayMainScreen(this.Start);
+	    };
+	    asteroidsGame.prototype.onStartBtnClick = function () {
 	    };
 	    asteroidsGame.prototype.getInitialShipPosition = function () {
 	        var stage = this.engine.getStageOptions();
@@ -1018,45 +1004,81 @@
 	"use strict";
 	var keyboardControls = (function () {
 	    function keyboardControls() {
+	        var _this = this;
 	        this.moveUp = false;
 	        this.moveDown = false;
 	        this.rotateLeft = false;
 	        this.rotateRight = false;
 	        this.shoot = false;
+	        this.evaluateKeyDown = function (keyCode) {
+	            _this.setValue(keyCode, true);
+	        };
+	        this.evaluateKeyUp = function (keyCode) {
+	            _this.setValue(keyCode, false);
+	        };
+	        this.setValue = function (keyCode, value) {
+	            switch (keyCode) {
+	                case 37:
+	                    _this.rotateLeft = value;
+	                    break;
+	                case 38:
+	                    _this.moveUp = value;
+	                    break;
+	                case 39:
+	                    _this.rotateRight = value;
+	                    break;
+	                case 40:
+	                    _this.moveDown = value;
+	                    break;
+	                case 32:
+	                    _this.shoot = value;
+	                    break;
+	                case 27:
+	                    _this.pause = value;
+	                    break;
+	                default:
+	                    break;
+	            }
+	        };
 	    }
-	    keyboardControls.prototype.evaluateKeyDown = function (keyCode) {
-	        this.setValue(keyCode, true);
-	    };
-	    keyboardControls.prototype.evaluateKeyUp = function (keyCode) {
-	        this.setValue(keyCode, false);
-	    };
-	    keyboardControls.prototype.setValue = function (keyCode, value) {
-	        switch (keyCode) {
-	            case 37:
-	                this.rotateLeft = value;
-	                break;
-	            case 38:
-	                this.moveUp = value;
-	                break;
-	            case 39:
-	                this.rotateRight = value;
-	                break;
-	            case 40:
-	                this.moveDown = value;
-	                break;
-	            case 32:
-	                this.shoot = value;
-	                break;
-	            case 27:
-	                this.pause = value;
-	                break;
-	            default:
-	                break;
-	        }
-	    };
 	    return keyboardControls;
 	}());
 	exports.keyboardControls = keyboardControls;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var jqueryGameUi = (function () {
+	    function jqueryGameUi(rootSelector) {
+	        this.documentRoot = $(':root');
+	        this.root = $(rootSelector);
+	        this.kineticStage = this.root.children('.kineticjs-content');
+	    }
+	    jqueryGameUi.prototype.displayMainScreen = function (startGameFunction) {
+	        $('<a />')
+	            .addClass('start-button')
+	            .html('START')
+	            .appendTo(this.root)
+	            .on('click', startGameFunction);
+	    };
+	    jqueryGameUi.prototype.displayGameScreen = function (keyDownHandler, keyUpHandler) {
+	        this.documentRoot.on('keydown', function (event) {
+	            event.preventDefault();
+	            keyDownHandler(event.keyCode);
+	        });
+	        this.documentRoot.on('keyup', function (event) {
+	            event.preventDefault();
+	            keyUpHandler(event.keyCode);
+	        });
+	    };
+	    jqueryGameUi.prototype.displayGameOverScreen = function () {
+	    };
+	    return jqueryGameUi;
+	}());
+	exports.jqueryGameUi = jqueryGameUi;
 
 
 /***/ }

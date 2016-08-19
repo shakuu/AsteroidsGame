@@ -164,7 +164,8 @@ export class kineticGraphicsEngine implements graphics {
 
     public destroy() {
         for (var i = 0; i < this.layers.length; i += 1) {
-            this.layers[i].clear();
+            this.layers[i].removeChildren();
+            this.layers[i].clear();            
         }
     }
 }

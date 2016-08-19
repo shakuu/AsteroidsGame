@@ -6,7 +6,8 @@ import {objectFactory} from './objects-factory/objects-factory';
 import {player} from './models/player';
 import {shapesFactory} from './graphics/shapes-factory'
 import {asteroidsGame, asteroidsGameCommands} from './game/asteroids-game';
-import {IControls, keyboardControls} from './game/controls'
+import {IControls, keyboardControls} from './game/controls';
+import {jqueryGameUi} from './ui/jquery-ui';
 
 export function createGame() {
     var factory = new objectFactory()
@@ -20,12 +21,13 @@ export function createGame() {
 
     var gameCommands = new asteroidsGameCommands();
 
+    var gameUi = new jqueryGameUi('#game');
     var engine = new kineticGraphicsEngine(stageOptions, 3, shapeFactory);
     var ship = factory.createObject(gameCommands.createShip);
     var playerOne = new player(ship as spaceShip, 'player one');
     var controls = new keyboardControls();
 
-    var game = new asteroidsGame(engine, playerOne, controls, factory, gameCommands);
+    var game = new asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
     console.log('it works');
 
     return game;
