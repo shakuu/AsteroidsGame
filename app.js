@@ -152,17 +152,17 @@
 	    };
 	    kineticGraphicsEngine.prototype.moveShape = function (id, position) {
 	        var shapeToMove = this.shapes[id], shapeSize = shapeToMove.getSize();
-	        if (this.checkLeft(position.x, shapeSize.width)) {
-	            position.x = this.stageOptions.width - (shapeSize.width / 2);
+	        if (this.checkLeft(position.x, shapeSize.height)) {
+	            position.x = this.stageOptions.width + shapeSize.height;
 	        }
-	        else if (this.checkRight(position.x, shapeSize.width)) {
-	            position.x = shapeSize.width / 2;
+	        else if (this.checkRight(position.x, shapeSize.height)) {
+	            position.x = -shapeSize.height;
 	        }
 	        else if (this.checkTop(position.y, shapeSize.height)) {
-	            position.y = this.stageOptions.height - (shapeSize.height / 2);
+	            position.y = this.stageOptions.height + shapeSize.height;
 	        }
 	        else if (this.checkBot(position.y, shapeSize.height)) {
-	            position.y = shapeSize.height / 2;
+	            position.y = -shapeSize.height;
 	        }
 	        shapeToMove.setPosition({ x: position.x, y: position.y });
 	    };
@@ -180,26 +180,26 @@
 	        }
 	        return outOfBounds;
 	    };
-	    kineticGraphicsEngine.prototype.checkLeft = function (x, width) {
-	        if (x - width < 0) {
+	    kineticGraphicsEngine.prototype.checkLeft = function (x, height) {
+	        if (x + height < 0) {
 	            return true;
 	        }
 	        return false;
 	    };
-	    kineticGraphicsEngine.prototype.checkRight = function (x, width) {
-	        if (x + width > this.stageOptions.width) {
+	    kineticGraphicsEngine.prototype.checkRight = function (x, height) {
+	        if (x - height > this.stageOptions.width) {
 	            return true;
 	        }
 	        return false;
 	    };
 	    kineticGraphicsEngine.prototype.checkTop = function (y, height) {
-	        if (y - height < 0) {
+	        if (y + height < 0) {
 	            return true;
 	        }
 	        return false;
 	    };
 	    kineticGraphicsEngine.prototype.checkBot = function (y, height) {
-	        if (y + height > this.stageOptions.height) {
+	        if (y - height > this.stageOptions.height) {
 	            return true;
 	        }
 	        return false;
@@ -601,8 +601,8 @@
 	        x: 470,
 	        y: 250,
 	        points: [10, 0, 20, 40, 0, 40, 10, 0],
-	        // width: 20,
-	        // height: 40,
+	        width: 20,
+	        height: 40,
 	        stroke: 'yellowgreen',
 	        closed: true,
 	        fill: 'transparent',
@@ -650,8 +650,8 @@
 	            40, 0
 	        ],
 	        closed: true,
-	        // width: 160,
-	        // height: 160,
+	        width: 160,
+	        height: 160,
 	        stroke: 'yellowgreen',
 	        fill: 'transparent',
 	        offset: { x: 80, y: 80 }

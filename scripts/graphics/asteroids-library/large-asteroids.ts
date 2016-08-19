@@ -14,8 +14,8 @@ export function createLargeAsteroidTypeOne() {
             40, 0
         ],
         closed: true,
-        // width: 160,
-        // height: 160,
+        width: 160,
+        height: 160,
         stroke: 'yellowgreen',
         fill: 'transparent',
         offset: { x: 80, y: 80 }

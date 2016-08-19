@@ -47,7 +47,7 @@ export class kineticGraphicsEngine implements graphics {
     public addShapes(type: string, id: number, position: canvasPosition, layerId: number) {
         var newShape: Kinetic.IShape = this.shapesFactory.createShape(type),
             position: canvasPosition;
-            
+
         newShape.setPosition(position);
         this.layers[layerId].add(newShape);
         this.shapes[id] = newShape;
@@ -85,21 +85,21 @@ export class kineticGraphicsEngine implements graphics {
         var shapeToMove = this.shapes[id],
             shapeSize = shapeToMove.getSize();
 
-        if (this.checkLeft(position.x, shapeSize.width)) {
+        if (this.checkLeft(position.x, shapeSize.height)) {
 
-            position.x = this.stageOptions.width - (shapeSize.width / 2);
+            position.x = this.stageOptions.width + shapeSize.height;
 
-        } else if (this.checkRight(position.x, shapeSize.width)) {
+        } else if (this.checkRight(position.x, shapeSize.height)) {
 
-            position.x = shapeSize.width / 2;
+            position.x = -shapeSize.height;
 
         } else if (this.checkTop(position.y, shapeSize.height)) {
 
-            position.y = this.stageOptions.height - (shapeSize.height / 2);
+            position.y = this.stageOptions.height + shapeSize.height;
 
         } else if (this.checkBot(position.y, shapeSize.height)) {
 
-            position.y = shapeSize.height / 2;
+            position.y = -shapeSize.height;
         }
 
         shapeToMove.setPosition({ x: position.x, y: position.y });
@@ -124,16 +124,16 @@ export class kineticGraphicsEngine implements graphics {
         return outOfBounds;
     }
 
-    private checkLeft(x: number, width: number) {
-        if (x - width < 0) {
+    private checkLeft(x: number, height: number) {
+        if (x + height < 0) {
             return true;
         }
 
         return false;
     }
 
-    private checkRight(x: number, width: number) {
-        if (x + width > this.stageOptions.width) {
+    private checkRight(x: number, height: number) {
+        if (x - height > this.stageOptions.width) {
             return true;
         }
 
@@ -141,7 +141,7 @@ export class kineticGraphicsEngine implements graphics {
     }
 
     private checkTop(y: number, height: number) {
-        if (y - height < 0) {
+        if (y + height < 0) {
             return true;
         }
 
@@ -149,7 +149,7 @@ export class kineticGraphicsEngine implements graphics {
     }
 
     private checkBot(y: number, height: number) {
-        if (y + height > this.stageOptions.height) {
+        if (y - height > this.stageOptions.height) {
             return true;
         }
 
