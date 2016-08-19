@@ -51,8 +51,10 @@ export class asteroidsGame {
     private shipLastShotTimestamp: number = 0;
     private shipCanShoot: boolean = false;
 
-    private lastCollisionDetectionTimeStamp: number = 0;
+    private asteroidSpawnTimestamp: number = 0;
+    private asteroidSpawnInterval: number = 20000;
 
+    private lastCollisionDetectionTimeStamp: number = 0;
 
     constructor(engine: graphics, player: player, controls: IControls, factory: objectFactory, commands: gameCommands) {
         this.engine = engine;
@@ -91,14 +93,25 @@ export class asteroidsGame {
         return position;
     }
 
+    private getRandomAsteroidPosition(shipPosition: canvasPosition) {
+        var stage = this.engine.getStageOptions();
+        
+        var newPosition = {
+            x: stage.width - shipPosition.x,
+            y: stage.height - shipPosition.y
+        };
+
+        return newPosition;
+    }
+
     private createNewAsteroid(type: string, position: canvasPosition) {
         var newAsteroid = this.factory.createObject(type);
-
-        newAsteroid.position ={
+       
+        newAsteroid.position = {
             x: position.x,
             y: position.y
         };
-        
+
         this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, newAsteroid.position, this.asteroidsLayerId);
 
         var angle = this.getRandomInt(0, 360);
@@ -119,19 +132,29 @@ export class asteroidsGame {
             this.start = timestamp;
         }
 
+        // Game logic related timers:
         if (timestamp - this.shipLastShotTimestamp > this.player.Ship.MinimumTimeBetweenShots) {
             this.shipCanShoot = true;
         } else {
             this.shipCanShoot = false;
         }
 
+        if (timestamp - this.asteroidSpawnTimestamp > this.asteroidSpawnInterval) {
+            var position = this.getRandomAsteroidPosition(this.player.Ship.position);
+            this.createNewAsteroid(this.commands.createLargeAsteroid, position);
+
+            this.asteroidSpawnTimestamp = timestamp;            
+        }
+
         this.gameLogic();
 
+        // Collision detection interval, affects performance
         if (timestamp - this.lastCollisionDetectionTimeStamp > 50) {
             this.collisionDetection();
             this.lastCollisionDetectionTimeStamp = timestamp;
         }
 
+        // Fixed framerate.
         if (timestamp - this.start > 1000 / 60) {
             this.start = null;
             this.engine.nextFrame();

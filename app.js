@@ -750,23 +750,33 @@
 	        this.start = null;
 	        this.shipLastShotTimestamp = 0;
 	        this.shipCanShoot = false;
+	        this.asteroidSpawnTimestamp = 0;
+	        this.asteroidSpawnInterval = 20000;
 	        this.lastCollisionDetectionTimeStamp = 0;
 	        this.run = function (timestamp) {
 	            _this.currentTimestamp = timestamp;
 	            if (!_this.start) {
 	                _this.start = timestamp;
 	            }
+	            // Game logic related timers:
 	            if (timestamp - _this.shipLastShotTimestamp > _this.player.Ship.MinimumTimeBetweenShots) {
 	                _this.shipCanShoot = true;
 	            }
 	            else {
 	                _this.shipCanShoot = false;
 	            }
+	            if (timestamp - _this.asteroidSpawnTimestamp > _this.asteroidSpawnInterval) {
+	                var position = _this.getRandomAsteroidPosition(_this.player.Ship.position);
+	                _this.createNewAsteroid(_this.commands.createLargeAsteroid, position);
+	                _this.asteroidSpawnTimestamp = timestamp;
+	            }
 	            _this.gameLogic();
+	            // Collision detection interval, affects performance
 	            if (timestamp - _this.lastCollisionDetectionTimeStamp > 50) {
 	                _this.collisionDetection();
 	                _this.lastCollisionDetectionTimeStamp = timestamp;
 	            }
+	            // Fixed framerate.
 	            if (timestamp - _this.start > 1000 / 60) {
 	                _this.start = null;
 	                _this.engine.nextFrame();
@@ -804,6 +814,14 @@
 	            y: (stage.height - 40) / 2
 	        };
 	        return position;
+	    };
+	    asteroidsGame.prototype.getRandomAsteroidPosition = function (shipPosition) {
+	        var stage = this.engine.getStageOptions();
+	        var newPosition = {
+	            x: stage.width - shipPosition.x,
+	            y: stage.height - shipPosition.y
+	        };
+	        return newPosition;
 	    };
 	    asteroidsGame.prototype.createNewAsteroid = function (type, position) {
 	        var newAsteroid = this.factory.createObject(type);
