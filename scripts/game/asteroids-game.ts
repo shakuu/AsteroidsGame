@@ -83,6 +83,8 @@ export class asteroidsGame {
         this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 700, y: 360 });
 
         window.requestAnimationFrame(this.run);
+
+        return this.player.Score;
     }
 
     private getInitialShipPosition(): canvasPosition {
@@ -164,13 +166,15 @@ export class asteroidsGame {
             this.engine.nextFrame();
         }
 
-        if (this.player.gameOver) {
-            // console.log('gameover');
+        if (!this.player.gameOver) {
+            window.requestAnimationFrame(this.run);
+        } else {
+            this.gameOver();
         }
 
-        if (!this.controls.pause) {
-            window.requestAnimationFrame(this.run);
-        }
+        // if (!this.controls.pause) {
+        //     window.requestAnimationFrame(this.run);
+        // }
     }
 
     private collisionDetection() {
@@ -344,5 +348,9 @@ export class asteroidsGame {
 
         // this.engine.moveShape(newShot.objectId, newShot.position);
         newShot.createForwardMotion(forwardMotionDelta);
+    }
+
+    private gameOver() {
+        this.engine.destroy();
     }
 }

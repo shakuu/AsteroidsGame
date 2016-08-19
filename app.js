@@ -46,17 +46,36 @@
 
 	"use strict";
 	var create_game_1 = __webpack_require__(1);
-	var asteroids = create_game_1.createGame();
-	exports.asteroids = asteroids;
-	document.onkeydown = function (event) {
-	    event.preventDefault();
-	    asteroids.Controls.evaluateKeyDown(event.keyCode);
-	};
-	document.onkeyup = function (event) {
-	    event.preventDefault();
-	    asteroids.Controls.evaluateKeyUp(event.keyCode);
-	};
-	asteroids.Start();
+	$(function () {
+	    var asteroids, score;
+	    $('<a />')
+	        .addClass('start-button')
+	        .appendTo('#game')
+	        .html('START')
+	        .on('click', function () {
+	        if (!asteroids) {
+	            score = 0;
+	            score = startGame();
+	        }
+	    });
+	    function startGame() {
+	        var root = $(':root');
+	        asteroids = create_game_1.createGame();
+	        root.on('keyup', handleKeyUp);
+	        root.on('keydown', handleKeyDown);
+	        function handleKeyDown(event) {
+	            event.preventDefault();
+	            asteroids.Controls.evaluateKeyDown(event.keyCode);
+	        }
+	        function handleKeyUp(event) {
+	            event.preventDefault();
+	            asteroids.Controls.evaluateKeyUp(event.keyCode);
+	        }
+	        var result = asteroids.Start();
+	        // console.log(result);
+	        return result;
+	    }
+	});
 
 
 /***/ },
@@ -208,6 +227,10 @@
 	        for (var i = 0; i < this.layers.length; i += 1) {
 	            this.layers[i].draw();
 	        }
+	    };
+	    kineticGraphicsEngine.prototype.destroy = function () {
+	        this.stage.destroyChildren();
+	        this.stage.destroy();
 	    };
 	    return kineticGraphicsEngine;
 	}());
@@ -785,11 +808,15 @@
 	                _this.start = null;
 	                _this.engine.nextFrame();
 	            }
-	            if (_this.player.gameOver) {
-	            }
-	            if (!_this.controls.pause) {
+	            if (!_this.player.gameOver) {
 	                window.requestAnimationFrame(_this.run);
 	            }
+	            else {
+	                _this.gameOver();
+	            }
+	            // if (!this.controls.pause) {
+	            //     window.requestAnimationFrame(this.run);
+	            // }
 	        };
 	        this.engine = engine;
 	        this.player = player;
@@ -810,6 +837,7 @@
 	        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 200, y: 200 });
 	        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 700, y: 360 });
 	        window.requestAnimationFrame(this.run);
+	        return this.player.Score;
 	    };
 	    asteroidsGame.prototype.getInitialShipPosition = function () {
 	        var stage = this.engine.getStageOptions();
@@ -973,6 +1001,9 @@
 	        newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, newShot.position, this.shotsLayerId);
 	        // this.engine.moveShape(newShot.objectId, newShot.position);
 	        newShot.createForwardMotion(forwardMotionDelta);
+	    };
+	    asteroidsGame.prototype.gameOver = function () {
+	        this.engine.destroy();
 	    };
 	    return asteroidsGame;
 	}());

@@ -7,6 +7,7 @@ export interface graphics {
     detectCollision(shapeId: number, layer: number): Kinetic.IShape;
     getStageOptions(): stageOptions;
     nextFrame(): void;
+    destroy();
 }
 
 export interface canvasPosition {

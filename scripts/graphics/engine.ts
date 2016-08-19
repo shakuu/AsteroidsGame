@@ -161,4 +161,9 @@ export class kineticGraphicsEngine implements graphics {
             this.layers[i].draw();
         }
     }
+
+    public destroy(){
+        this.stage.destroyChildren();
+        this.stage.destroy();
+    }
 }

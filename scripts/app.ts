@@ -1,17 +1,42 @@
 import { createGame } from './create-game';
 
-var asteroids = createGame();
+$(function () {
+    var asteroids,
+        score;
 
-document.onkeydown = function (event) {
-    event.preventDefault();
-    asteroids.Controls.evaluateKeyDown(event.keyCode);
-}
+    $('<a />')
+        .addClass('start-button')
+        .appendTo('#game')
+        .html('START')
+        .on('click', function () {
+            if (!asteroids) {
+                score = 0;
+                score = startGame();
+            }
+        });
 
-document.onkeyup = function (event) {
-    event.preventDefault();
-    asteroids.Controls.evaluateKeyUp(event.keyCode);
-}
+    function startGame() {
+        var root = $(':root');
 
-asteroids.Start();
+        asteroids = createGame();
 
-export {asteroids};
+        root.on('keyup', handleKeyUp);
+        root.on('keydown', handleKeyDown);
+
+        function handleKeyDown(event) {
+            event.preventDefault();
+            asteroids.Controls.evaluateKeyDown(event.keyCode);
+        }
+
+        function handleKeyUp(event) {
+            event.preventDefault();
+            asteroids.Controls.evaluateKeyUp(event.keyCode);
+        }
+
+        var result = asteroids.Start();
+        // console.log(result);
+        return result;
+    }
+});
+
+
