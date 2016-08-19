@@ -68,8 +68,8 @@
 	var objects_factory_1 = __webpack_require__(3);
 	var player_1 = __webpack_require__(8);
 	var shapes_factory_1 = __webpack_require__(9);
-	var asteroids_game_1 = __webpack_require__(11);
-	var controls_1 = __webpack_require__(12);
+	var asteroids_game_1 = __webpack_require__(13);
+	var controls_1 = __webpack_require__(14);
 	function createGame() {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
@@ -527,6 +527,8 @@
 
 	"use strict";
 	var large_asteroids_1 = __webpack_require__(10);
+	var medium_asteroids_1 = __webpack_require__(11);
+	var small_asteroids_1 = __webpack_require__(12);
 	var shapesFactory = (function () {
 	    function shapesFactory() {
 	    }
@@ -543,10 +545,10 @@
 	                newShape = createLargeAsteroid();
 	                break;
 	            case 'mediumAsteroid':
-	                newShape = large_asteroids_1.createLargeAsteroidTypeOne();
+	                newShape = createMediumAsteroid();
 	                break;
 	            case 'smallAsteroid':
-	                newShape = large_asteroids_1.createLargeAsteroidTypeOne();
+	                newShape = createSmallAsteroid();
 	                break;
 	        }
 	        return newShape;
@@ -562,6 +564,30 @@
 	            break;
 	        default:
 	            newShape = large_asteroids_1.createLargeAsteroidTypeOne();
+	            break;
+	    }
+	    return newShape;
+	}
+	function createMediumAsteroid() {
+	    var newShape, typeNr = getRandomInt(1, 1);
+	    switch (typeNr) {
+	        case 1:
+	            newShape = medium_asteroids_1.createMediumAsteroidTypeOne();
+	            break;
+	        default:
+	            newShape = medium_asteroids_1.createMediumAsteroidTypeOne();
+	            break;
+	    }
+	    return newShape;
+	}
+	function createSmallAsteroid() {
+	    var newShape, typeNr = getRandomInt(1, 1);
+	    switch (typeNr) {
+	        case 1:
+	            newShape = small_asteroids_1.createSmallAsteroidTypeOne();
+	            break;
+	        default:
+	            newShape = small_asteroids_1.createSmallAsteroidTypeOne();
 	            break;
 	    }
 	    return newShape;
@@ -633,6 +659,66 @@
 
 /***/ },
 /* 11 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function createMediumAsteroidTypeOne() {
+	    // 80x80
+	    var newShape = new Kinetic.Line({
+	        x: 200,
+	        y: 200,
+	        points: [
+	            30, 0,
+	            70, 0,
+	            80, 50,
+	            70, 80,
+	            10, 80,
+	            0, 30,
+	            30, 0
+	        ],
+	        closed: true,
+	        // width: 80,
+	        // height: 80,
+	        stroke: 'yellowgreen',
+	        fill: 'transparent',
+	        offset: { x: 40, y: 40 }
+	    });
+	    return newShape;
+	}
+	exports.createMediumAsteroidTypeOne = createMediumAsteroidTypeOne;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	"use strict";
+	function createSmallAsteroidTypeOne() {
+	    // 40x40
+	    var newShape = new Kinetic.Line({
+	        x: 200,
+	        y: 200,
+	        points: [
+	            0, 0,
+	            30, 0,
+	            40, 40,
+	            0, 30,
+	            0, 0
+	        ],
+	        closed: true,
+	        // width: 40,
+	        // height: 40,
+	        stroke: 'yellowgreen',
+	        fill: 'transparent',
+	        offset: { x: 20, y: 20 }
+	    });
+	    return newShape;
+	}
+	exports.createSmallAsteroidTypeOne = createSmallAsteroidTypeOne;
+
+
+/***/ },
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -853,7 +939,7 @@
 
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports) {
 
 	"use strict";

@@ -1,23 +1,21 @@
-export function createMediumAsteroidTypeOne() {
-    // 80x80
+export function createSmallAsteroidTypeOne() {
+    // 40x40
     var newShape = new Kinetic.Line({
         x: 200,
         y: 200,
         points: [
+            0, 0,
             30, 0,
-            70, 0,
-            80, 50,
-            70, 80,
-            10, 80,
+            40, 40,
             0, 30,
-            30, 0
+            0, 0
         ],
         closed: true,
-        // width: 80,
-        // height: 80,
+        // width: 40,
+        // height: 40,
         stroke: 'yellowgreen',
         fill: 'transparent',
-        offset: { x: 40, y: 40 }
+        offset: { x: 20, y: 20 }
     });
 
     return newShape;

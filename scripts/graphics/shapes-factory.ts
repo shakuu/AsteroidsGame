@@ -1,6 +1,8 @@
 import {shapesFactory as interfaceFactory} from '../contracts/shapes-factory';
-import {createLargeAsteroidTypeOne} from './asteroids-library/large-asteroids'
+import {createLargeAsteroidTypeOne} from './asteroids-library/large-asteroids';
 import {createMediumAsteroidTypeOne} from './asteroids-library/medium-asteroids';
+import {createSmallAsteroidTypeOne} from './asteroids-library/small-asteroids';
+
 export class shapesFactory implements interfaceFactory {
 
     constructor() {
@@ -21,10 +23,10 @@ export class shapesFactory implements interfaceFactory {
                 newShape = createLargeAsteroid();
                 break;
             case 'mediumAsteroid':
-                newShape = createLargeAsteroidTypeOne();
+                newShape = createMediumAsteroid();
                 break;
             case 'smallAsteroid':
-                newShape = createLargeAsteroidTypeOne();
+                newShape = createSmallAsteroid();
                 break;
         }
 
@@ -42,6 +44,38 @@ function createLargeAsteroid(): Kinetic.IShape {
             break;
         default:
             newShape = createLargeAsteroidTypeOne();
+            break;
+    }
+
+    return newShape;
+}
+
+function createMediumAsteroid(): Kinetic.IShape {
+    var newShape: Kinetic.IShape,
+        typeNr = getRandomInt(1, 1);
+
+    switch (typeNr) {
+        case 1:
+            newShape = createMediumAsteroidTypeOne();
+            break;
+        default:
+            newShape = createMediumAsteroidTypeOne();
+            break;
+    }
+
+    return newShape;
+}
+
+function createSmallAsteroid(): Kinetic.IShape {
+    var newShape: Kinetic.IShape,
+        typeNr = getRandomInt(1, 1);
+
+    switch (typeNr) {
+        case 1:
+            newShape = createSmallAsteroidTypeOne();
+            break;
+        default:
+            newShape = createSmallAsteroidTypeOne();
             break;
     }
 
