@@ -10,9 +10,20 @@ body #game {
 body #game .kineticjs-content {
   margin: auto;
 }
-body #game .start-button {
+body #game .start-menu {
   position: fixed;
   display: block;
-  left: auto;
-  top: 200px;
+  width: 160px;
+  height: 160px;
+  text-align: center;
+  font-size: 24px;
+}
+body #game .start-menu .button {
+  display: block;
+  padding: 5px 10px;
+  width: 100%;
+}
+body #game .start-menu .hovered {
+  background-color: rgba(255,255,255,0.05);
+  text-shadow: 0px 0px 50px #9acd32;
 }

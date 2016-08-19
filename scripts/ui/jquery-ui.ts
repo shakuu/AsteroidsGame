@@ -1,3 +1,5 @@
+import {stageOptions} from '../contracts/igraphics';
+
 export interface gameUi {
     displayMainScreen(startGameFunction: () => any): void;
     displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any): void;
@@ -5,35 +7,61 @@ export interface gameUi {
 }
 
 export class jqueryGameUi implements gameUi {
+    private options: stageOptions;
+
     private documentRoot = $(':root');
     private root: JQuery;
 
     private kineticStage: JQuery;
     private btnStart: JQuery;
+    private btnMenu: JQuery;
 
-    constructor(rootSelector: string) {
-        this.root = $(rootSelector);
+    constructor(options: stageOptions) {
+        this.options = options;
         this.initializeElements();
     }
 
     private initializeElements(): void {
+        this.root = $('#' + this.options.container);
         this.kineticStage = this.root.children('.kineticjs-content');
+
+        this.btnMenu = $('<div />')
+            .addClass('start-menu')
+            .css({
+                'left': ((this.options.width - 160) / 2) + 'px',
+                'top': ((this.options.height - 160) / 2) + 'px'
+            });
 
         this.btnStart = $('<a />')
             .addClass('start-button')
-            .html('START');
+            .addClass('button')
+            .html('START')
+            .appendTo(this.btnMenu);
     }
 
     public displayMainScreen(startGameFunction: () => any) {
         this.kineticStage.hide();
 
-        this.btnStart
+        this.btnMenu
             .appendTo(this.root)
-            .on('click', startGameFunction);
+            .on('mouseenter', '.button', function (event) {
+                $(event.target).addClass('hovered');
+            }).on('mouseleave', '.button', function (event) {
+                $(event.target).removeClass('hovered');
+            });
+            
+        this.btnStart.on('click', function () {
+            $(this).removeClass('hovered');
+            startGameFunction();
+        });
     }
 
     public displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any) {
-        this.btnStart.off('click').remove();
+        this.btnMenu
+            .off('mouseenter')
+            .off('mouseleave')
+            .remove();
+        this.btnStart.off('click');
 
         this.kineticStage.show();
 

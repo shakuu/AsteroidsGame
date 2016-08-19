@@ -73,7 +73,7 @@
 	        height: window.innerHeight
 	    };
 	    var gameCommands = new asteroids_game_1.asteroidsGameCommands();
-	    var gameUi = new jquery_ui_1.jqueryGameUi('#game');
+	    var gameUi = new jquery_ui_1.jqueryGameUi(stageOptions);
 	    var engine = new engine_1.kineticGraphicsEngine(stageOptions, 3, shapeFactory);
 	    var ship = factory.createObject(gameCommands.createShip);
 	    var playerOne = new player_1.player(ship, 'player one');
@@ -851,6 +851,11 @@
 	        var angle = this.getRandomInt(0, 360);
 	        var delta = newAsteroid.getForwardMotionDelta(angle);
 	        newAsteroid.createForwardMotion(delta);
+	        var newAsteroidSpeed = this.getRandomInt(75, 200) / 100;
+	        if (this.getRandomInt(0, 100) < 50) {
+	            newAsteroidSpeed *= -1;
+	        }
+	        newAsteroid.yawSpeed = newAsteroidSpeed;
 	        this.asteroids.push(newAsteroid);
 	    };
 	    asteroidsGame.prototype.getRandomInt = function (min, max) {
@@ -1064,25 +1069,46 @@
 
 	"use strict";
 	var jqueryGameUi = (function () {
-	    function jqueryGameUi(rootSelector) {
+	    function jqueryGameUi(options) {
 	        this.documentRoot = $(':root');
-	        this.root = $(rootSelector);
+	        this.options = options;
 	        this.initializeElements();
 	    }
 	    jqueryGameUi.prototype.initializeElements = function () {
+	        this.root = $('#' + this.options.container);
 	        this.kineticStage = this.root.children('.kineticjs-content');
+	        this.btnMenu = $('<div />')
+	            .addClass('start-menu')
+	            .css({
+	            'left': ((this.options.width - 160) / 2) + 'px',
+	            'top': ((this.options.height - 160) / 2) + 'px'
+	        });
 	        this.btnStart = $('<a />')
 	            .addClass('start-button')
-	            .html('START');
+	            .addClass('button')
+	            .html('START')
+	            .appendTo(this.btnMenu);
 	    };
 	    jqueryGameUi.prototype.displayMainScreen = function (startGameFunction) {
 	        this.kineticStage.hide();
-	        this.btnStart
+	        this.btnMenu
 	            .appendTo(this.root)
-	            .on('click', startGameFunction);
+	            .on('mouseenter', '.button', function (event) {
+	            $(event.target).addClass('hovered');
+	        }).on('mouseleave', '.button', function (event) {
+	            $(event.target).removeClass('hovered');
+	        });
+	        this.btnStart.on('click', function () {
+	            $(this).removeClass('hovered');
+	            startGameFunction();
+	        });
 	    };
 	    jqueryGameUi.prototype.displayGameScreen = function (keyDownHandler, keyUpHandler) {
-	        this.btnStart.off('click').remove();
+	        this.btnMenu
+	            .off('mouseenter')
+	            .off('mouseleave')
+	            .remove();
+	        this.btnStart.off('click');
 	        this.kineticStage.show();
 	        this.documentRoot.on('keydown', function (event) {
 	            event.preventDefault();

@@ -142,6 +142,12 @@ export class asteroidsGame {
         var delta = newAsteroid.getForwardMotionDelta(angle);
         newAsteroid.createForwardMotion(delta);
 
+        var newAsteroidSpeed = this.getRandomInt(75, 200) / 100;
+        if (this.getRandomInt(0, 100) < 50) {
+            newAsteroidSpeed *= -1;
+        }
+        newAsteroid.yawSpeed = newAsteroidSpeed;
+
         this.asteroids.push(newAsteroid as asteroid);
     }
 
