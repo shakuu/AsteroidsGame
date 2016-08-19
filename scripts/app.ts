@@ -34,7 +34,7 @@ $(function () {
         }
 
         var result = asteroids.Start();
-        // console.log(result);
+        console.log(result);
         return result;
     }
 });

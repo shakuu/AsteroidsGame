@@ -172,9 +172,9 @@ export class asteroidsGame {
             this.gameOver();
         }
 
-        // if (!this.controls.pause) {
-        //     window.requestAnimationFrame(this.run);
-        // }
+        if (this.controls.pause) {
+            this.gameOver();
+        }
     }
 
     private collisionDetection() {

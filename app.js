@@ -72,7 +72,7 @@
 	            asteroids.Controls.evaluateKeyUp(event.keyCode);
 	        }
 	        var result = asteroids.Start();
-	        // console.log(result);
+	        console.log(result);
 	        return result;
 	    }
 	});
@@ -229,8 +229,9 @@
 	        }
 	    };
 	    kineticGraphicsEngine.prototype.destroy = function () {
-	        this.stage.destroyChildren();
-	        this.stage.destroy();
+	        for (var i = 0; i < this.layers.length; i += 1) {
+	            this.layers[i].clear();
+	        }
 	    };
 	    return kineticGraphicsEngine;
 	}());
@@ -814,9 +815,9 @@
 	            else {
 	                _this.gameOver();
 	            }
-	            // if (!this.controls.pause) {
-	            //     window.requestAnimationFrame(this.run);
-	            // }
+	            if (_this.controls.pause) {
+	                _this.gameOver();
+	            }
 	        };
 	        this.engine = engine;
 	        this.player = player;
