@@ -2,7 +2,7 @@ import {asteroid} from './models/asteroids';
 import {spaceShip} from './models/space-ship';
 import {kineticGraphicsEngine} from './graphics/engine';
 import {graphics} from './contracts/igraphics';
-import {objectFactory} from './shapes-factory/objects-factory';
+import {objectFactory} from './objects-factory/objects-factory';
 import {player} from './models/player';
 import {shapesFactory} from './graphics/shapes-factory'
 import {asteroidsGame, asteroidsGameCommands} from './game/asteroids-game';

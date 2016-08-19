@@ -1,6 +1,6 @@
 import {player} from '../models/player';
 import {graphics} from '../contracts/igraphics';
-import {objectFactory} from '../shapes-factory/objects-factory';
+import {objectFactory} from '../objects-factory/objects-factory';
 import {asteroid, largeAsteroid, mediumAsteroid, smallAsteroid} from '../models/asteroids';
 import {IControls, keyboardControls} from './controls'
 import {spaceObject} from '../models/space-object';
