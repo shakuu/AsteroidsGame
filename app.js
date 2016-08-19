@@ -800,7 +800,6 @@
 	            }
 	            else {
 	                _this.gameOver();
-	                _this.player.gameOver = false;
 	            }
 	            if (_this.controls.pause) {
 	                _this.gameOver();
@@ -990,6 +989,11 @@
 	        newShot.createForwardMotion(forwardMotionDelta);
 	    };
 	    asteroidsGame.prototype.gameOver = function () {
+	        this.gameUi.displayGameOverScreen();
+	        this.controls.resetState();
+	        this.asteroidSpawnInterval = 20000;
+	        this.player.gameOver = false;
+	        this.gameUi.displayMainScreen(this.Start);
 	        this.engine.destroy();
 	    };
 	    return asteroidsGame;
@@ -1010,6 +1014,7 @@
 	        this.rotateLeft = false;
 	        this.rotateRight = false;
 	        this.shoot = false;
+	        this.pause = false;
 	        this.evaluateKeyDown = function (keyCode) {
 	            _this.setValue(keyCode, true);
 	        };
@@ -1041,6 +1046,14 @@
 	            }
 	        };
 	    }
+	    keyboardControls.prototype.resetState = function () {
+	        this.moveUp = false;
+	        this.moveDown = false;
+	        this.rotateLeft = false;
+	        this.rotateRight = false;
+	        this.shoot = false;
+	        this.pause = false;
+	    };
 	    return keyboardControls;
 	}());
 	exports.keyboardControls = keyboardControls;
@@ -1065,6 +1078,7 @@
 	            .on('click', startGameFunction);
 	    };
 	    jqueryGameUi.prototype.displayGameScreen = function (keyDownHandler, keyUpHandler) {
+	        this.root.find('.start-button').off('click').remove();
 	        this.documentRoot.on('keydown', function (event) {
 	            event.preventDefault();
 	            keyDownHandler(event.keyCode);
@@ -1075,6 +1089,8 @@
 	        });
 	    };
 	    jqueryGameUi.prototype.displayGameOverScreen = function () {
+	        this.documentRoot.off('keydown');
+	        this.documentRoot.off('keyup');
 	    };
 	    return jqueryGameUi;
 	}());

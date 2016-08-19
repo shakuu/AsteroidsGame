@@ -79,13 +79,13 @@ export class asteroidsGame {
         return this.controls;
     }
 
-    public displayMainScreen(){
+    public displayMainScreen() {
         this.player.gameOver = false;
         this.gameUi.displayMainScreen(this.Start);
     }
 
-    public onStartBtnClick(){
-        
+    public onStartBtnClick() {
+
     }
 
     public Start = () => {
@@ -190,7 +190,6 @@ export class asteroidsGame {
             window.requestAnimationFrame(this.run);
         } else {
             this.gameOver();
-            this.player.gameOver = false;
         }
 
         if (this.controls.pause) {
@@ -372,6 +371,11 @@ export class asteroidsGame {
     }
 
     private gameOver() {
+        this.gameUi.displayGameOverScreen();
+        this.controls.resetState();
+        this.asteroidSpawnInterval = 20000;
+        this.player.gameOver = false;
+        this.gameUi.displayMainScreen(this.Start);
         this.engine.destroy();
     }
 }

@@ -8,6 +8,7 @@ export interface IControls {
 
     evaluateKeyDown(keyCode: number);
     evaluateKeyUp(keyCode: number);
+    resetState(): void;
 }
 
 export class keyboardControls implements IControls {
@@ -16,7 +17,7 @@ export class keyboardControls implements IControls {
     rotateLeft: boolean = false;
     rotateRight: boolean = false;
     shoot: boolean = false;
-    pause: boolean;
+    pause: boolean = false;
 
     evaluateKeyDown = (keyCode: number) => {
         this.setValue(keyCode, true);
@@ -24,6 +25,15 @@ export class keyboardControls implements IControls {
 
     evaluateKeyUp = (keyCode: number) => {
         this.setValue(keyCode, false);
+    }
+
+    resetState() {
+        this.moveUp = false;
+        this.moveDown = false;
+        this.rotateLeft = false;
+        this.rotateRight = false;
+        this.shoot = false;
+        this.pause = false;
     }
 
     private setValue = (keyCode: number, value: boolean) => {

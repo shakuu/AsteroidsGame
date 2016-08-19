@@ -23,8 +23,8 @@ export class jqueryGameUi implements gameUi {
     }
 
     public displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any) {
-        
-        
+        this.root.find('.start-button').off('click').remove();
+
         this.documentRoot.on('keydown', function (event) {
             event.preventDefault();
             keyDownHandler(event.keyCode);
@@ -36,5 +36,7 @@ export class jqueryGameUi implements gameUi {
     }
 
     public displayGameOverScreen() {
+        this.documentRoot.off('keydown');
+        this.documentRoot.off('keyup');
     }
 }
