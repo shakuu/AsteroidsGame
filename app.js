@@ -790,6 +790,7 @@
 	        this.player.Ship.position =
 	            this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
 	        this.createNewAsteroid(this.commands.createLargeAsteroid);
+	        this.createNewAsteroid(this.commands.createLargeAsteroid);
 	        window.requestAnimationFrame(this.run);
 	    };
 	    asteroidsGame.prototype.createNewAsteroid = function (type) {
