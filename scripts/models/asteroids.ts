@@ -32,8 +32,8 @@ export class mediumAsteroid extends asteroid {
     constructor(id: number) {
         super(id, 2, 50, 'mediumAsteroid');
 
-        this.maximumForwardSpeed = 0.25;
-        this.yawSpeed = 1;
+        this.maximumForwardSpeed = 0.2;
+        this.yawSpeed = 1.25;
     }
 }
 
@@ -41,7 +41,7 @@ export class smallAsteroid extends asteroid {
     constructor(id: number) {
         super(id, 1, 100, 'smallAsteroid');
 
-        this.maximumForwardSpeed = 0.5;
-        this.yawSpeed = 1;
+        this.maximumForwardSpeed = 0.33;
+        this.yawSpeed = 1.5;
     }
 }

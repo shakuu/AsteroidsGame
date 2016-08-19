@@ -304,8 +304,8 @@
 	    __extends(mediumAsteroid, _super);
 	    function mediumAsteroid(id) {
 	        _super.call(this, id, 2, 50, 'mediumAsteroid');
-	        this.maximumForwardSpeed = 0.25;
-	        this.yawSpeed = 1;
+	        this.maximumForwardSpeed = 0.2;
+	        this.yawSpeed = 1.25;
 	    }
 	    return mediumAsteroid;
 	}(asteroid));
@@ -314,8 +314,8 @@
 	    __extends(smallAsteroid, _super);
 	    function smallAsteroid(id) {
 	        _super.call(this, id, 1, 100, 'smallAsteroid');
-	        this.maximumForwardSpeed = 0.5;
-	        this.yawSpeed = 1;
+	        this.maximumForwardSpeed = 0.33;
+	        this.yawSpeed = 1.5;
 	    }
 	    return smallAsteroid;
 	}(asteroid));

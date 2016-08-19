@@ -71,6 +71,7 @@ export class asteroidsGame {
             this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
 
         this.createNewAsteroid(this.commands.createLargeAsteroid);
+        this.createNewAsteroid(this.commands.createLargeAsteroid);
 
         window.requestAnimationFrame(this.run);
     }
