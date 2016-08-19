@@ -122,8 +122,12 @@
 	        }
 	        return layers;
 	    };
-	    kineticGraphicsEngine.prototype.addShapes = function (type, id, layerId) {
+	    kineticGraphicsEngine.prototype.getStageOptions = function () {
+	        return this.stageOptions;
+	    };
+	    kineticGraphicsEngine.prototype.addShapes = function (type, id, position, layerId) {
 	        var newShape = this.shapesFactory.createShape(type), position;
+	        newShape.setPosition(position);
 	        this.layers[layerId].add(newShape);
 	        this.shapes[id] = newShape;
 	        newShape.setId(id + '');
@@ -787,16 +791,27 @@
 	        configurable: true
 	    });
 	    asteroidsGame.prototype.Start = function () {
-	        this.player.Ship.position =
-	            this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
-	        this.createNewAsteroid(this.commands.createLargeAsteroid);
-	        this.createNewAsteroid(this.commands.createLargeAsteroid);
+	        this.player.Ship.position = this.getInitialShipPosition();
+	        this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.player.Ship.position, this.shipLayerId);
+	        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 200, y: 200 });
+	        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 700, y: 360 });
 	        window.requestAnimationFrame(this.run);
 	    };
-	    asteroidsGame.prototype.createNewAsteroid = function (type) {
+	    asteroidsGame.prototype.getInitialShipPosition = function () {
+	        var stage = this.engine.getStageOptions();
+	        var position = {
+	            x: (stage.width - 20) / 2,
+	            y: (stage.height - 40) / 2
+	        };
+	        return position;
+	    };
+	    asteroidsGame.prototype.createNewAsteroid = function (type, position) {
 	        var newAsteroid = this.factory.createObject(type);
-	        newAsteroid.position =
-	            this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, this.asteroidsLayerId);
+	        newAsteroid.position = {
+	            x: position.x,
+	            y: position.y
+	        };
+	        this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, newAsteroid.position, this.asteroidsLayerId);
 	        var angle = this.getRandomInt(0, 360);
 	        var delta = newAsteroid.getForwardMotionDelta(angle);
 	        newAsteroid.createForwardMotion(delta);
@@ -835,9 +850,10 @@
 	                var collidingShapeObjectId = +isColliding.getId();
 	                this.removeShapeWithObjectId(collidingShapeObjectId);
 	                this.player.Score += this.lastKilledAsteroidReward;
+	                var position = isColliding.getPosition();
 	                var newAsteroidsOptions = this.getCreateNewAsteroidsAfterKillOptions(this.lastKilledAsteroidSize);
 	                for (var j = 0; j < newAsteroidsOptions.numberOfNewAsteroids; j += 1) {
-	                    this.createNewAsteroid(newAsteroidsOptions.typeOfNewAsteroidsCommand);
+	                    this.createNewAsteroid(newAsteroidsOptions.typeOfNewAsteroidsCommand, position);
 	                }
 	                // Destroy Shot
 	                isColliding.remove();
@@ -926,13 +942,15 @@
 	    };
 	    asteroidsGame.prototype.createNewShot = function () {
 	        var newShot = this.factory.createObject(this.commands.createBasicAttack);
-	        var forwardMotion = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
+	        var forwardMotionDelta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
 	        this.shots.push(newShot);
-	        newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, this.shotsLayerId);
-	        newShot.position.x = this.player.Ship.position.x + forwardMotion.deltaX;
-	        newShot.position.y = this.player.Ship.position.y + forwardMotion.deltaY;
-	        this.engine.moveShape(newShot.objectId, newShot.position);
-	        newShot.createForwardMotion(forwardMotion);
+	        newShot.position = {
+	            x: this.player.Ship.position.x + forwardMotionDelta.deltaX,
+	            y: this.player.Ship.position.y + forwardMotionDelta.deltaY
+	        };
+	        newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, newShot.position, this.shotsLayerId);
+	        // this.engine.moveShape(newShot.objectId, newShot.position);
+	        newShot.createForwardMotion(forwardMotionDelta);
 	    };
 	    return asteroidsGame;
 	}());

@@ -1,5 +1,5 @@
 import {player} from '../models/player';
-import {graphics, canvasPosition} from '../contracts/igraphics';
+import {graphics, canvasPosition, stageOptions} from '../contracts/igraphics';
 import {objectFactory} from '../objects-factory/objects-factory';
 import {asteroid, largeAsteroid, mediumAsteroid, smallAsteroid} from '../models/asteroids';
 import {IControls, keyboardControls} from './controls'
@@ -67,19 +67,39 @@ export class asteroidsGame {
     }
 
     public Start() {
-        this.player.Ship.position =
-            this.engine.addShapes(this.player.Ship.type, this.player.Ship.objectId, this.shipLayerId);
+        this.player.Ship.position = this.getInitialShipPosition();
 
-        this.createNewAsteroid(this.commands.createLargeAsteroid);
-        this.createNewAsteroid(this.commands.createLargeAsteroid);
+        this.engine.addShapes(
+            this.player.Ship.type,
+            this.player.Ship.objectId,
+            this.player.Ship.position,
+            this.shipLayerId);
+
+        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 200, y: 200 });
+        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 700, y: 360 });
 
         window.requestAnimationFrame(this.run);
     }
 
-    private createNewAsteroid(type: string) {
+    private getInitialShipPosition(): canvasPosition {
+        var stage = this.engine.getStageOptions();
+        var position: canvasPosition = {
+            x: (stage.width - 20) / 2,
+            y: (stage.height - 40) / 2
+        };
+
+        return position;
+    }
+
+    private createNewAsteroid(type: string, position: canvasPosition) {
         var newAsteroid = this.factory.createObject(type);
-        newAsteroid.position =
-            this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, this.asteroidsLayerId);
+
+        newAsteroid.position ={
+            x: position.x,
+            y: position.y
+        };
+        
+        this.engine.addShapes(newAsteroid.type, newAsteroid.objectId, newAsteroid.position, this.asteroidsLayerId);
 
         var angle = this.getRandomInt(0, 360);
         var delta = newAsteroid.getForwardMotionDelta(angle);
@@ -165,11 +185,12 @@ export class asteroidsGame {
                 this.removeShapeWithObjectId(collidingShapeObjectId);
 
                 this.player.Score += this.lastKilledAsteroidReward;
-               
+
+                var position = isColliding.getPosition();
                 var newAsteroidsOptions = this.getCreateNewAsteroidsAfterKillOptions(this.lastKilledAsteroidSize);
                 for (var j = 0; j < newAsteroidsOptions.numberOfNewAsteroids; j += 1) {
 
-                    this.createNewAsteroid(newAsteroidsOptions.typeOfNewAsteroidsCommand);
+                    this.createNewAsteroid(newAsteroidsOptions.typeOfNewAsteroidsCommand, position);
                 }
 
                 // Destroy Shot
@@ -283,15 +304,18 @@ export class asteroidsGame {
 
     private createNewShot() {
         var newShot = this.factory.createObject(this.commands.createBasicAttack) as basicAttack;
-        var forwardMotion = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
+        var forwardMotionDelta = this.player.Ship.getForwardMotionDelta(this.player.Ship.currentYawAngleInDegrees);
 
         this.shots.push(newShot);
-        newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, this.shotsLayerId);
 
-        newShot.position.x = this.player.Ship.position.x + forwardMotion.deltaX;
-        newShot.position.y = this.player.Ship.position.y + forwardMotion.deltaY;
+        newShot.position = {
+            x: this.player.Ship.position.x + forwardMotionDelta.deltaX,
+            y: this.player.Ship.position.y + forwardMotionDelta.deltaY
+        };
 
-        this.engine.moveShape(newShot.objectId, newShot.position);
-        newShot.createForwardMotion(forwardMotion);
+        newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, newShot.position, this.shotsLayerId);
+
+        // this.engine.moveShape(newShot.objectId, newShot.position);
+        newShot.createForwardMotion(forwardMotionDelta);
     }
 }

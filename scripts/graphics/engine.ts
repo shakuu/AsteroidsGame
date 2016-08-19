@@ -1,11 +1,6 @@
-import {graphics, canvasPosition} from '../contracts/igraphics';
+import {graphics, canvasPosition, stageOptions} from '../contracts/igraphics';
 import {shapesFactory} from '../contracts/shapes-factory';
 
-interface stageOptions {
-    container: string;
-    width: number;
-    height: number;
-}
 
 export class kineticGraphicsEngine implements graphics {
     private stage: Kinetic.IStage;
@@ -45,9 +40,15 @@ export class kineticGraphicsEngine implements graphics {
         return layers;
     }
 
-    public addShapes(type: string, id: number, layerId: number) {
+    public getStageOptions() {
+        return this.stageOptions;
+    }
+
+    public addShapes(type: string, id: number, position: canvasPosition, layerId: number) {
         var newShape: Kinetic.IShape = this.shapesFactory.createShape(type),
             position: canvasPosition;
+            
+        newShape.setPosition(position);
         this.layers[layerId].add(newShape);
         this.shapes[id] = newShape;
         newShape.setId(id + '');
