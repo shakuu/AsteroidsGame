@@ -100,7 +100,7 @@ export class asteroidsGame {
             this.shipLayerId);
 
         this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 200, y: 200 });
-        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 700, y: 360 });
+        this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 900, y: 360 });
 
         window.requestAnimationFrame(this.run);
 
@@ -366,7 +366,6 @@ export class asteroidsGame {
 
         newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, newShot.position, this.shotsLayerId);
 
-        // this.engine.moveShape(newShot.objectId, newShot.position);
         newShot.createForwardMotion(forwardMotionDelta);
     }
 

@@ -5,25 +5,37 @@ export interface gameUi {
 }
 
 export class jqueryGameUi implements gameUi {
-    private root: JQuery;
-    private kineticStage: JQuery;
     private documentRoot = $(':root');
+    private root: JQuery;
+
+    private kineticStage: JQuery;
+    private btnStart: JQuery;
 
     constructor(rootSelector: string) {
         this.root = $(rootSelector);
+        this.initializeElements();
+    }
+
+    private initializeElements(): void {
         this.kineticStage = this.root.children('.kineticjs-content');
+
+        this.btnStart = $('<a />')
+            .addClass('start-button')
+            .html('START');
     }
 
     public displayMainScreen(startGameFunction: () => any) {
-        $('<a />')
-            .addClass('start-button')
-            .html('START')
+        this.kineticStage.hide();
+
+        this.btnStart
             .appendTo(this.root)
             .on('click', startGameFunction);
     }
 
     public displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any) {
-        this.root.find('.start-button').off('click').remove();
+        this.btnStart.off('click').remove();
+
+        this.kineticStage.show();
 
         this.documentRoot.on('keydown', function (event) {
             event.preventDefault();

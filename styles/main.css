@@ -1,4 +1,18 @@
-body{
-    background-image: url('../imgs/bg.jpg');
-    color: white;
+body {
+  overflow: hidden;
+  background-image: url("../imgs/bg.jpg");
+  color: #fff;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+body #game {
+  margin: auto;
+}
+body #game .kineticjs-content {
+  margin: auto;
+}
+body #game .start-button {
+  position: fixed;
+  display: block;
+  left: auto;
+  top: 200px;
 }

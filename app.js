@@ -69,8 +69,8 @@
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
 	    var stageOptions = {
 	        container: 'game',
-	        width: 960,
-	        height: 540
+	        width: window.innerWidth,
+	        height: window.innerHeight
 	    };
 	    var gameCommands = new asteroids_game_1.asteroidsGameCommands();
 	    var gameUi = new jquery_ui_1.jqueryGameUi('#game');
@@ -761,7 +761,7 @@
 	            _this.player.Ship.position = _this.getInitialShipPosition();
 	            _this.engine.addShapes(_this.player.Ship.type, _this.player.Ship.objectId, _this.player.Ship.position, _this.shipLayerId);
 	            _this.createNewAsteroid(_this.commands.createLargeAsteroid, { x: 200, y: 200 });
-	            _this.createNewAsteroid(_this.commands.createLargeAsteroid, { x: 700, y: 360 });
+	            _this.createNewAsteroid(_this.commands.createLargeAsteroid, { x: 900, y: 360 });
 	            window.requestAnimationFrame(_this.run);
 	            return _this.player.Score;
 	        };
@@ -985,7 +985,6 @@
 	            y: this.player.Ship.position.y + forwardMotionDelta.deltaY
 	        };
 	        newShot.position = this.engine.addShapes(newShot.type, newShot.objectId, newShot.position, this.shotsLayerId);
-	        // this.engine.moveShape(newShot.objectId, newShot.position);
 	        newShot.createForwardMotion(forwardMotionDelta);
 	    };
 	    asteroidsGame.prototype.gameOver = function () {
@@ -1068,17 +1067,23 @@
 	    function jqueryGameUi(rootSelector) {
 	        this.documentRoot = $(':root');
 	        this.root = $(rootSelector);
-	        this.kineticStage = this.root.children('.kineticjs-content');
+	        this.initializeElements();
 	    }
-	    jqueryGameUi.prototype.displayMainScreen = function (startGameFunction) {
-	        $('<a />')
+	    jqueryGameUi.prototype.initializeElements = function () {
+	        this.kineticStage = this.root.children('.kineticjs-content');
+	        this.btnStart = $('<a />')
 	            .addClass('start-button')
-	            .html('START')
+	            .html('START');
+	    };
+	    jqueryGameUi.prototype.displayMainScreen = function (startGameFunction) {
+	        this.kineticStage.hide();
+	        this.btnStart
 	            .appendTo(this.root)
 	            .on('click', startGameFunction);
 	    };
 	    jqueryGameUi.prototype.displayGameScreen = function (keyDownHandler, keyUpHandler) {
-	        this.root.find('.start-button').off('click').remove();
+	        this.btnStart.off('click').remove();
+	        this.kineticStage.show();
 	        this.documentRoot.on('keydown', function (event) {
 	            event.preventDefault();
 	            keyDownHandler(event.keyCode);

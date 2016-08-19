@@ -11,12 +11,11 @@ import {jqueryGameUi} from './ui/jquery-ui';
 
 export function createGame() {
     var factory = new objectFactory()
-
     var shapeFactory = new shapesFactory();
     var stageOptions = {
         container: 'game',
-        width: 960,
-        height: 540
+        width:  window.innerWidth,
+        height:  window.innerHeight
     };
 
     var gameCommands = new asteroidsGameCommands();
