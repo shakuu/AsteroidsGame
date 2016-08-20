@@ -27,7 +27,7 @@ export function createGame() {
     var gameUi = new jqueryGameUi(stageOptions, scoreClient);
     var engine = new kineticGraphicsEngine(stageOptions, 3, shapeFactory);
     var ship = factory.createObject(gameCommands.createShip);
-    var playerOne = new player(ship as spaceShip, 'player one');
+    var playerOne = new player(ship as spaceShip, 'one');
     var controls = new keyboardControls();
 
     var game = new asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);

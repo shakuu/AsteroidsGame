@@ -1,5 +1,5 @@
 export interface HighScoreClient {
-    submitScore(score: number): boolean;
+    submitScore(score: number, name: string): boolean;
     getScoreList(number: number);
 
     currentHighScore: string;
@@ -7,7 +7,7 @@ export interface HighScoreClient {
 
 export class MyServerHighScoreClient implements HighScoreClient {
     private url = window.location.href;
-    private highScore;
+    private highScore: number;
 
     get currentHighScore() {
         if (this.highScore) {
@@ -17,12 +17,12 @@ export class MyServerHighScoreClient implements HighScoreClient {
         }
     }
 
-    submitScore(score: number): boolean {
-        var url = this.url + 'score/' + score.toString();
+    submitScore(score: number, name: string): boolean {
+        var submitScoreUrl = this.url + 'score/' + score.toString() + '/name/' + name;
+        $.get(submitScoreUrl, function() { });
 
-        $.get(url, function() {
-            console.log('success');
-        });
+        var updateCurrentHighScoreUrl = this.url + 'get/hiscore';
+        $.get(updateCurrentHighScoreUrl, this.assignHighScore)
 
         return false;
     }
@@ -36,6 +36,6 @@ export class MyServerHighScoreClient implements HighScoreClient {
     }
 
     assignHighScore = (score) => {
-        this.highScore = score;
+        this.highScore = +score;
     }
 }

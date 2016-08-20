@@ -6,7 +6,7 @@ export class HighScoreLocalStorage implements HighScoreClient {
         return this.getScoreList(5).toString();
     }
 
-    submitScore(score: number): boolean {
+    submitScore(score: number, name: string): boolean {
         var key = this.evaluateScoreRank(score);
         if (key) {
             localStorage.setItem(key, score.toString());

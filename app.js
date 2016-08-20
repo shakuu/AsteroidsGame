@@ -80,7 +80,7 @@
 	    var gameUi = new jquery_ui_1.jqueryGameUi(stageOptions, scoreClient);
 	    var engine = new engine_1.kineticGraphicsEngine(stageOptions, 3, shapeFactory);
 	    var ship = factory.createObject(gameCommands.createShip);
-	    var playerOne = new player_1.player(ship, 'player one');
+	    var playerOne = new player_1.player(ship, 'one');
 	    var controls = new controls_1.keyboardControls();
 	    var game = new asteroids_game_1.asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
 	    var hiScorePlugin = new engine_plugins_1.ScoreTrackerKineticGraphicsPlugin('HI-SCORE ', 8, { x: stageOptions.width - 310, y: 10 });
@@ -1213,7 +1213,7 @@
 	    asteroidsGame.prototype.gameOver = function () {
 	        this.asteroids = [];
 	        this.shots = [];
-	        this.gameUi.displayGameOverScreen(this.player.Score);
+	        this.gameUi.displayGameOverScreen(this.player.Score, this.player.Name);
 	        this.gameUi.displayMainScreen(this.Start);
 	        this.engine.removeAllGameShapes();
 	        this.engine.clear();
@@ -1350,11 +1350,10 @@
 	            keyUpHandler(event.keyCode);
 	        });
 	    };
-	    jqueryGameUi.prototype.displayGameOverScreen = function (score) {
+	    jqueryGameUi.prototype.displayGameOverScreen = function (score, name) {
 	        this.documentRoot.off('keydown');
 	        this.documentRoot.off('keyup');
-	        this.scoreClient.submitScore(score);
-	        this.scoreClient.getScoreList(5);
+	        this.scoreClient.submitScore(score, name);
 	    };
 	    return jqueryGameUi;
 	}());
@@ -1371,7 +1370,7 @@
 	        var _this = this;
 	        this.url = window.location.href;
 	        this.assignHighScore = function (score) {
-	            _this.highScore = score;
+	            _this.highScore = +score;
 	        };
 	    }
 	    Object.defineProperty(MyServerHighScoreClient.prototype, "currentHighScore", {
@@ -1386,11 +1385,11 @@
 	        enumerable: true,
 	        configurable: true
 	    });
-	    MyServerHighScoreClient.prototype.submitScore = function (score) {
-	        var url = this.url + 'score/' + score.toString();
-	        $.get(url, function () {
-	            console.log('success');
-	        });
+	    MyServerHighScoreClient.prototype.submitScore = function (score, name) {
+	        var submitScoreUrl = this.url + 'score/' + score.toString() + '/name/' + name;
+	        $.get(submitScoreUrl, function () { });
+	        var updateCurrentHighScoreUrl = this.url + 'get/hiscore';
+	        $.get(updateCurrentHighScoreUrl, this.assignHighScore);
 	        return false;
 	    };
 	    MyServerHighScoreClient.prototype.getScoreList = function (number) {

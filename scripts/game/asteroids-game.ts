@@ -391,7 +391,7 @@ export class asteroidsGame {
         this.asteroids = [];
         this.shots = [];
 
-        this.gameUi.displayGameOverScreen(this.player.Score);
+        this.gameUi.displayGameOverScreen(this.player.Score, this.player.Name);
         this.gameUi.displayMainScreen(this.Start);
         this.engine.removeAllGameShapes();
         this.engine.clear();

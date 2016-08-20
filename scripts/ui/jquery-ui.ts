@@ -4,7 +4,7 @@ import {HighScoreClient} from './high-score-client';
 export interface gameUi {
     displayMainScreen(startGameFunction: () => any): void;
     displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any): void;
-    displayGameOverScreen(score: number): void;
+    displayGameOverScreen(score: number, name: string): void;
 
     currentHighScore: string;
 }
@@ -84,11 +84,10 @@ export class jqueryGameUi implements gameUi {
         });
     }
 
-    public displayGameOverScreen(score: number) {
+    public displayGameOverScreen(score: number, name: string) {
         this.documentRoot.off('keydown');
         this.documentRoot.off('keyup');
 
-        this.scoreClient.submitScore(score);
-        this.scoreClient.getScoreList(5);
+        this.scoreClient.submitScore(score, name);
     }
 }
