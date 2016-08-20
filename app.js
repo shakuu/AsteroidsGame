@@ -211,9 +211,9 @@
 	        for (var i = 0; i < this.layers.length; i += 1) {
 	            this.layers[i].draw();
 	        }
-	        for (var i_1 = 0; i_1 < this.plugins.length; i_1 += 1) {
-	            this.plugins[i_1].draw();
-	        }
+	        // for (let i = 0; i < this.plugins.length; i += 1) {
+	        //     this.plugins[i].draw();
+	        // }
 	    };
 	    kineticGraphicsEngine.prototype.clear = function () {
 	        this.stage.clear();
@@ -251,7 +251,8 @@
 	        enumerable: true,
 	        configurable: true
 	    });
-	    KineticGraphicsPlugin.prototype.updateText = function (content) {
+	    KineticGraphicsPlugin.prototype.update = function (content) {
+	        this.layer.draw();
 	    };
 	    KineticGraphicsPlugin.prototype.draw = function () {
 	        this.layer.draw();
@@ -267,6 +268,10 @@
 	        this.contentLength = contentLengthInCharacters;
 	        this.intializeTextShape(position);
 	    }
+	    ScoreTrackerKineticGraphicsPlugin.prototype.update = function (content) {
+	        this.updateText(content);
+	        _super.prototype.update.call(this, content);
+	    };
 	    ScoreTrackerKineticGraphicsPlugin.prototype.updateText = function (content) {
 	        var len = this.contentLength - content.length;
 	        for (var i = 0; i < len; i += 1) {
@@ -870,7 +875,7 @@
 	        this.asteroidSpawnIntervalDecreasingStep = 2500;
 	        this.lastCollisionDetectionTimeStamp = 0;
 	        this.Start = function () {
-	            _this.scoreGraphicsPlugin.updateText(_this.player.Score.toString());
+	            _this.scoreGraphicsPlugin.update(_this.player.Score.toString());
 	            _this.gameUi.displayGameScreen(_this.controls.evaluateKeyDown, _this.controls.evaluateKeyUp);
 	            _this.player.Ship.position = _this.getInitialShipPosition();
 	            _this.engine.addShapes(_this.player.Ship.type, _this.player.Ship.objectId, _this.player.Ship.position, _this.shipLayerId);
@@ -1007,7 +1012,7 @@
 	                var collidingShapeObjectId = +isColliding.getId();
 	                this.removeShapeWithObjectId(collidingShapeObjectId);
 	                this.player.Score += this.lastKilledAsteroidReward;
-	                this.scoreGraphicsPlugin.updateText(this.player.Score.toString());
+	                this.scoreGraphicsPlugin.update(this.player.Score.toString());
 	                var position = isColliding.getPosition();
 	                var newAsteroidsOptions = this.getCreateNewAsteroidsAfterKillOptions(this.lastKilledAsteroidSize);
 	                for (var j = 0; j < newAsteroidsOptions.numberOfNewAsteroids; j += 1) {

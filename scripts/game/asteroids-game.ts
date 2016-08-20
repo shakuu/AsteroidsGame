@@ -93,7 +93,7 @@ export class asteroidsGame {
     }
 
     public Start = () => {
-        this.scoreGraphicsPlugin.updateText(this.player.Score.toString());
+        this.scoreGraphicsPlugin.update(this.player.Score.toString());
 
         this.gameUi.displayGameScreen(this.controls.evaluateKeyDown, this.controls.evaluateKeyUp);
 
@@ -246,7 +246,7 @@ export class asteroidsGame {
                 this.removeShapeWithObjectId(collidingShapeObjectId);
 
                 this.player.Score += this.lastKilledAsteroidReward;
-                this.scoreGraphicsPlugin.updateText(this.player.Score.toString());
+                this.scoreGraphicsPlugin.update(this.player.Score.toString());
 
                 var position = isColliding.getPosition();
                 var newAsteroidsOptions = this.getCreateNewAsteroidsAfterKillOptions(this.lastKilledAsteroidSize);

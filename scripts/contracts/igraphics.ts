@@ -15,7 +15,7 @@ export interface graphics {
 
 export interface graphicsPlugin {
     draw();
-    updateText(content: string);
+    update(content: string);
 }
 
 export interface canvasPosition {

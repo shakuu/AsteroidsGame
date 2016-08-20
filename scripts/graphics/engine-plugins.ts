@@ -11,8 +11,8 @@ export class KineticGraphicsPlugin implements graphicsPlugin {
         return this.layer;
     }
 
-    updateText(content: string) {
-
+    update(content: string) {
+        this.layer.draw();
     }
 
     public draw() {
@@ -31,6 +31,11 @@ export class ScoreTrackerKineticGraphicsPlugin extends KineticGraphicsPlugin {
         this.label = label;
         this.contentLength = contentLengthInCharacters;
         this.intializeTextShape(position);
+    }
+
+    public update(content: string) {
+        this.updateText(content);
+        super.update(content);
     }
 
     public updateText(content: string) {

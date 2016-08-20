@@ -169,9 +169,9 @@ export class kineticGraphicsEngine implements graphics {
             this.layers[i].draw();
         }
 
-        for (let i = 0; i < this.plugins.length; i += 1) {
-            this.plugins[i].draw();
-        }
+        // for (let i = 0; i < this.plugins.length; i += 1) {
+        //     this.plugins[i].draw();
+        // }
     }
 
     public clear(){
