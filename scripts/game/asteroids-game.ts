@@ -132,9 +132,21 @@ export class asteroidsGame {
         var stage = this.engine.getStageOptions();
 
         var newPosition = {
-            x: stage.width - shipPosition.x,
-            y: stage.height - shipPosition.y
+            x: 0,
+            y: 0
         };
+
+        if (shipPosition.x <= stage.width / 2) {
+            newPosition.x = stage.width - 1000;
+        } else {
+            newPosition.x = stage.width + 1000;
+        }
+
+        if (shipPosition.y <= stage.height / 2) {
+            newPosition.y = stage.height - 1000;
+        } else {
+            newPosition.y = stage.height + 1000;
+        }
 
         return newPosition;
     }
