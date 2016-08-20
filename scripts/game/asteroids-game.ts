@@ -100,7 +100,7 @@ export class asteroidsGame {
 
     public Start = () => {
         this.scoreGraphicsPlugin.update(this.player.Score.toString());
-        this.hiScoreGraphicsPlugin.update(this.gameUi.currentHighScore);
+        // this.hiScoreGraphicsPlugin.update(this.gameUi.currentHighScore);
 
         this.gameUi.displayGameScreen(this.controls.evaluateKeyDown, this.controls.evaluateKeyUp);
 
