@@ -1371,7 +1371,6 @@
 	        var _this = this;
 	        this.url = window.location.href;
 	        this.assignHighScore = function (score) {
-	            debugger;
 	            _this.highScore = score;
 	        };
 	    }
@@ -1395,7 +1394,7 @@
 	        return false;
 	    };
 	    MyServerHighScoreClient.prototype.getScoreList = function (number) {
-	        var url = this.url + 'getscore/hiscore';
+	        var url = this.url + 'get/hiscore';
 	        $.get(url, this.assignHighScore);
 	        return '';
 	    };

@@ -36,7 +36,6 @@ export class MyServerHighScoreClient implements HighScoreClient {
     }
 
     assignHighScore = (score) => {
-        debugger;
         this.highScore = score;
     }
 }
