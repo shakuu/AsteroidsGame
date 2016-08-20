@@ -1,7 +1,6 @@
 import {spaceObject, forwardMotion} from './space-object';
 
 class spaceShip extends spaceObject {
-    // TODO: 
     private yawAcceleration: number;
     private yawDeceleration: number;
 
@@ -94,6 +93,11 @@ class spaceShip extends spaceObject {
         }
 
         this.position = currentPosition;
+    }
+
+    clearAllMovement(): void{
+        this.forwardMotions = [];
+        this.yawSpeed = 0;
     }
 }
 

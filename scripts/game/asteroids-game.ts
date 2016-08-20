@@ -103,8 +103,6 @@ export class asteroidsGame {
         this.createNewAsteroid(this.commands.createLargeAsteroid, { x: 900, y: 360 });
 
         window.requestAnimationFrame(this.run);
-
-        return this.player.Score;
     }
 
     private getInitialShipPosition(): canvasPosition {
@@ -376,10 +374,17 @@ export class asteroidsGame {
     }
 
     private gameOver() {
-        this.gameUi.displayGameOverScreen();
+        this.asteroids = [];
+        this.shots = [];
+
         this.controls.resetState();
         this.asteroidSpawnInterval = 20000;
+
+        this.player.Ship.clearAllMovement();
         this.player.gameOver = false;
+        this.player.Score = 0;
+
+        this.gameUi.displayGameOverScreen();
         this.gameUi.displayMainScreen(this.Start);
         this.engine.destroy();
     }

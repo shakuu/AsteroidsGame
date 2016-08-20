@@ -1,4 +1,5 @@
-import {graphics, canvasPosition, stageOptions} from '../contracts/igraphics';
+import {graphics, canvasPosition, stageOptions, graphicsPlugin} from '../contracts/igraphics';
+import {KineticGraphicsPlugin} from './engine-plugins';
 import {shapesFactory} from '../contracts/shapes-factory';
 
 
@@ -6,6 +7,8 @@ export class kineticGraphicsEngine implements graphics {
     private stage: Kinetic.IStage;
     private layers: Kinetic.ILayer[] = [];
     private shapes: Kinetic.IShape[] = [];
+
+    private plugins: KineticGraphicsPlugin[] = [];
 
     private shapesFactory: shapesFactory;
 
@@ -42,6 +45,11 @@ export class kineticGraphicsEngine implements graphics {
 
     public getStageOptions() {
         return this.stageOptions;
+    }
+
+    public addPlugin(plugin: KineticGraphicsPlugin){
+        this.plugins.push(plugin);
+        this.stage.add(plugin.Layer);
     }
 
     public addShapes(type: string, id: number, position: canvasPosition, layerId: number) {
@@ -167,5 +175,7 @@ export class kineticGraphicsEngine implements graphics {
             this.layers[i].removeChildren();
             this.layers[i].clear();            
         }
+
+        this.shapes = [];
     }
 }

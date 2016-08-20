@@ -94,6 +94,7 @@
 	    function kineticGraphicsEngine(stageOptions, numberOfLayers, shapesFactory) {
 	        this.layers = [];
 	        this.shapes = [];
+	        this.plugins = [];
 	        this.shapesFactory = shapesFactory;
 	        this.stage = this.createStage(stageOptions.container, stageOptions.width, stageOptions.height);
 	        this.layers = this.createLayers(numberOfLayers);
@@ -119,6 +120,10 @@
 	    };
 	    kineticGraphicsEngine.prototype.getStageOptions = function () {
 	        return this.stageOptions;
+	    };
+	    kineticGraphicsEngine.prototype.addPlugin = function (plugin) {
+	        this.plugins.push(plugin);
+	        this.stage.add(plugin.Layer);
 	    };
 	    kineticGraphicsEngine.prototype.addShapes = function (type, id, position, layerId) {
 	        var newShape = this.shapesFactory.createShape(type), position;
@@ -209,6 +214,7 @@
 	            this.layers[i].removeChildren();
 	            this.layers[i].clear();
 	        }
+	        this.shapes = [];
 	    };
 	    return kineticGraphicsEngine;
 	}());
@@ -448,6 +454,10 @@
 	            currentPosition.y += currentMotion.deltaY * currentMotion.speed;
 	        }
 	        this.position = currentPosition;
+	    };
+	    spaceShip.prototype.clearAllMovement = function () {
+	        this.forwardMotions = [];
+	        this.yawSpeed = 0;
 	    };
 	    return spaceShip;
 	}(space_object_1.spaceObject));
@@ -792,7 +802,6 @@
 	            _this.createNewAsteroid(_this.commands.createLargeAsteroid, { x: 200, y: 200 });
 	            _this.createNewAsteroid(_this.commands.createLargeAsteroid, { x: 900, y: 360 });
 	            window.requestAnimationFrame(_this.run);
-	            return _this.player.Score;
 	        };
 	        this.run = function (timestamp) {
 	            _this.currentTimestamp = timestamp;
@@ -1022,10 +1031,14 @@
 	        newShot.createForwardMotion(forwardMotionDelta);
 	    };
 	    asteroidsGame.prototype.gameOver = function () {
-	        this.gameUi.displayGameOverScreen();
+	        this.asteroids = [];
+	        this.shots = [];
 	        this.controls.resetState();
 	        this.asteroidSpawnInterval = 20000;
+	        this.player.Ship.clearAllMovement();
 	        this.player.gameOver = false;
+	        this.player.Score = 0;
+	        this.gameUi.displayGameOverScreen();
 	        this.gameUi.displayMainScreen(this.Start);
 	        this.engine.destroy();
 	    };

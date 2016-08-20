@@ -8,6 +8,12 @@ export interface graphics {
     getStageOptions(): stageOptions;
     nextFrame(): void;
     destroy();
+
+    addPlugin(plugin: graphicsPlugin): void;
+}
+
+export interface graphicsPlugin{
+    draw();
 }
 
 export interface canvasPosition {
