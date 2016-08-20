@@ -61,6 +61,7 @@ export class asteroidsGame {
     private lastCollisionDetectionTimeStamp: number = 0;
 
     private scoreGraphicsPlugin: graphicsPlugin;
+    private hiScoreGraphicsPlugin: graphicsPlugin;
 
     constructor(engine: graphics,
         player: player,
@@ -82,6 +83,11 @@ export class asteroidsGame {
         this.engine.addPlugin(plugin);
     }
 
+    public addHiScoreGraphicsPlugin(plugin: graphicsPlugin) {
+        this.hiScoreGraphicsPlugin = plugin;
+        this.engine.addPlugin(plugin);
+    }
+
     public get Controls() {
         return this.controls;
     }
@@ -94,6 +100,7 @@ export class asteroidsGame {
 
     public Start = () => {
         this.scoreGraphicsPlugin.update(this.player.Score.toString());
+        this.hiScoreGraphicsPlugin.update(this.gameUi.currentHighScore);
 
         this.gameUi.displayGameScreen(this.controls.evaluateKeyDown, this.controls.evaluateKeyUp);
 
@@ -391,7 +398,7 @@ export class asteroidsGame {
 
         this.controls.resetState();
         this.asteroidSpawnInterval = 20000;
-        
+
         this.player.Ship.clearAllMovement();
         this.player.gameOver = false;
         this.player.Score = 0;

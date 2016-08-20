@@ -30,7 +30,9 @@ export function createGame() {
 
     var game = new asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
 
-    var scoreGraphicsPlugin = new ScoreTrackerKineticGraphicsPlugin('SCORE: ', 8, { x: 10, y: 10 });
+    var hiScorePlugin = new ScoreTrackerKineticGraphicsPlugin('HI-SCORE ', 8, { x: stageOptions.width - 310, y: 10 });
+    var scoreGraphicsPlugin = new ScoreTrackerKineticGraphicsPlugin('SCORE ', 8, { x: 10, y: 10 });
+    game.addHiScoreGraphicsPlugin(hiScorePlugin);
     game.addScoreGraphicsPlugin(scoreGraphicsPlugin);
 
     console.log('it works');

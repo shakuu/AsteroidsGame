@@ -1,6 +1,6 @@
 export interface HighScoreClient {
     submitScore(score: number): boolean;
-    getScoreList(number: number): {};
+    getScoreList(number: number);
 }
 
 export class MyServerHighScoreClient implements HighScoreClient {
