@@ -666,10 +666,16 @@
 	    return newShape;
 	}
 	function createMediumAsteroid() {
-	    var newShape, typeNr = getRandomInt(1, 1);
+	    var newShape, typeNr = getRandomInt(1, 3);
 	    switch (typeNr) {
 	        case 1:
 	            newShape = medium_asteroids_1.createMediumAsteroidTypeOne();
+	            break;
+	        case 2:
+	            newShape = medium_asteroids_1.createMediumAsteroidTypeTwo();
+	            break;
+	        case 3:
+	            newShape = medium_asteroids_1.createMediumAsteroidTypeThree();
 	            break;
 	        default:
 	            newShape = medium_asteroids_1.createMediumAsteroidTypeOne();
@@ -809,6 +815,58 @@
 	    return newShape;
 	}
 	exports.createMediumAsteroidTypeOne = createMediumAsteroidTypeOne;
+	function createMediumAsteroidTypeTwo() {
+	    // 80x80
+	    var newShape = new Kinetic.Line({
+	        x: 200,
+	        y: 200,
+	        points: [
+	            0, 0,
+	            50, 30,
+	            60, 0,
+	            80, 80,
+	            50, 50,
+	            20, 80,
+	            0, 80,
+	            30, 40,
+	            0, 0
+	        ],
+	        closed: true,
+	        width: 80,
+	        height: 80,
+	        stroke: 'yellowgreen',
+	        fill: 'transparent',
+	        offset: { x: 40, y: 40 }
+	    });
+	    return newShape;
+	}
+	exports.createMediumAsteroidTypeTwo = createMediumAsteroidTypeTwo;
+	function createMediumAsteroidTypeThree() {
+	    // 80x80
+	    var newShape = new Kinetic.Line({
+	        x: 200,
+	        y: 200,
+	        points: [
+	            20, 0,
+	            30, 10,
+	            60, 0,
+	            80, 60,
+	            40, 80,
+	            30, 70,
+	            30, 60,
+	            0, 30,
+	            20, 0
+	        ],
+	        closed: true,
+	        width: 80,
+	        height: 80,
+	        stroke: 'yellowgreen',
+	        fill: 'transparent',
+	        offset: { x: 40, y: 40 }
+	    });
+	    return newShape;
+	}
+	exports.createMediumAsteroidTypeThree = createMediumAsteroidTypeThree;
 
 
 /***/ },
