@@ -1376,7 +1376,10 @@
 	        return true;
 	    };
 	    HighScoreLocalStorage.prototype.getScoreList = function (number) {
-	        return localStorage[1];
+	        if (localStorage[1]) {
+	            return localStorage[1];
+	        }
+	        return '';
 	    };
 	    HighScoreLocalStorage.prototype.evaluateScoreRank = function (score) {
 	        if (!localStorage[1]) {

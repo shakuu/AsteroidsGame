@@ -11,7 +11,10 @@ export class HighScoreLocalStorage implements HighScoreClient {
     }
 
     getScoreList(number: number) {
-        return localStorage[1];
+        if(localStorage[1]){
+            return localStorage[1];
+        }
+        return '';
     }
 
     private evaluateScoreRank(score: number): any {
