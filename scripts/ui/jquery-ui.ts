@@ -27,7 +27,7 @@ export class jqueryGameUi implements gameUi {
     }
 
     get currentHighScore() {
-        return this.scoreClient.getScoreList(5).toString();
+        return this.scoreClient.currentHighScore;
     }
 
     private initializeElements(): void {

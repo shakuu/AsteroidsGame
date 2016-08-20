@@ -1,6 +1,11 @@
 import {HighScoreClient} from './high-score-client';
 
 export class HighScoreLocalStorage implements HighScoreClient {
+
+    get currentHighScore() {
+        return this.getScoreList(5).toString();
+    }
+
     submitScore(score: number): boolean {
         var key = this.evaluateScoreRank(score);
         if (key) {
@@ -11,7 +16,7 @@ export class HighScoreLocalStorage implements HighScoreClient {
     }
 
     getScoreList(number: number) {
-        if(localStorage[1]){
+        if (localStorage[1]) {
             return localStorage[1];
         }
         return '';

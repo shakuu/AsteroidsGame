@@ -65,7 +65,7 @@
 	var asteroids_game_1 = __webpack_require__(14);
 	var controls_1 = __webpack_require__(15);
 	var jquery_ui_1 = __webpack_require__(16);
-	var high_score_localstorage_1 = __webpack_require__(17);
+	var high_score_client_1 = __webpack_require__(17);
 	function createGame() {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
@@ -74,7 +74,8 @@
 	        width: window.innerWidth,
 	        height: window.innerHeight
 	    };
-	    var scoreClient = new high_score_localstorage_1.HighScoreLocalStorage();
+	    // var scoreClient = new HighScoreLocalStorage();
+	    var scoreClient = new high_score_client_1.MyServerHighScoreClient();
 	    var gameCommands = new asteroids_game_1.asteroidsGameCommands();
 	    var gameUi = new jquery_ui_1.jqueryGameUi(stageOptions, scoreClient);
 	    var engine = new engine_1.kineticGraphicsEngine(stageOptions, 3, shapeFactory);
@@ -1299,7 +1300,7 @@
 	    }
 	    Object.defineProperty(jqueryGameUi.prototype, "currentHighScore", {
 	        get: function () {
-	            return this.scoreClient.getScoreList(5).toString();
+	            return this.scoreClient.currentHighScore;
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -1365,36 +1366,42 @@
 /***/ function(module, exports) {
 
 	"use strict";
-	var HighScoreLocalStorage = (function () {
-	    function HighScoreLocalStorage() {
+	var MyServerHighScoreClient = (function () {
+	    function MyServerHighScoreClient() {
+	        var _this = this;
+	        this.url = window.location.href;
+	        this.assignHighScore = function (score) {
+	            debugger;
+	            _this.highScore = score;
+	        };
 	    }
-	    HighScoreLocalStorage.prototype.submitScore = function (score) {
-	        var key = this.evaluateScoreRank(score);
-	        if (key) {
-	            localStorage.setItem(key, score.toString());
-	        }
-	        return true;
+	    Object.defineProperty(MyServerHighScoreClient.prototype, "currentHighScore", {
+	        get: function () {
+	            if (this.highScore) {
+	                return this.highScore.toString();
+	            }
+	            else {
+	                return '0';
+	            }
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    MyServerHighScoreClient.prototype.submitScore = function (score) {
+	        var url = this.url + 'score/' + score.toString();
+	        $.get(url, function () {
+	            console.log('success');
+	        });
+	        return false;
 	    };
-	    HighScoreLocalStorage.prototype.getScoreList = function (number) {
-	        if (localStorage[1]) {
-	            return localStorage[1];
-	        }
+	    MyServerHighScoreClient.prototype.getScoreList = function (number) {
+	        var url = this.url + 'getscore/hiscore';
+	        $.get(url, this.assignHighScore);
 	        return '';
 	    };
-	    HighScoreLocalStorage.prototype.evaluateScoreRank = function (score) {
-	        if (!localStorage[1]) {
-	            return 1;
-	        }
-	        for (var key in localStorage) {
-	            if (+localStorage[key] < +score) {
-	                return key;
-	            }
-	        }
-	        return null;
-	    };
-	    return HighScoreLocalStorage;
+	    return MyServerHighScoreClient;
 	}());
-	exports.HighScoreLocalStorage = HighScoreLocalStorage;
+	exports.MyServerHighScoreClient = MyServerHighScoreClient;
 
 
 /***/ }

@@ -10,6 +10,7 @@ import {asteroidsGame, asteroidsGameCommands} from './game/asteroids-game';
 import {IControls, keyboardControls} from './game/controls';
 import {jqueryGameUi} from './ui/jquery-ui';
 import {HighScoreLocalStorage} from './ui/high-score-localstorage';
+import {MyServerHighScoreClient} from './ui/high-score-client';
 
 export function createGame() {
     var factory = new objectFactory()
@@ -20,7 +21,8 @@ export function createGame() {
         height: window.innerHeight
     };
 
-    var scoreClient = new HighScoreLocalStorage();
+    // var scoreClient = new HighScoreLocalStorage();
+    var scoreClient = new MyServerHighScoreClient();
     var gameCommands = new asteroidsGameCommands();
     var gameUi = new jqueryGameUi(stageOptions, scoreClient);
     var engine = new kineticGraphicsEngine(stageOptions, 3, shapeFactory);
