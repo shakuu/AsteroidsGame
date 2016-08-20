@@ -84,7 +84,7 @@
 	    var game = new asteroids_game_1.asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
 	    var hiScorePlugin = new engine_plugins_1.ScoreTrackerKineticGraphicsPlugin('HI-SCORE ', 8, { x: stageOptions.width - 310, y: 10 });
 	    var scoreGraphicsPlugin = new engine_plugins_1.ScoreTrackerKineticGraphicsPlugin('SCORE ', 8, { x: 10, y: 10 });
-	    game.addHiScoreGraphicsPlugin(hiScorePlugin);
+	    // game.addHiScoreGraphicsPlugin(hiScorePlugin);
 	    game.addScoreGraphicsPlugin(scoreGraphicsPlugin);
 	    console.log('it works');
 	    return game;
@@ -966,7 +966,7 @@
 	        this.lastCollisionDetectionTimeStamp = 0;
 	        this.Start = function () {
 	            _this.scoreGraphicsPlugin.update(_this.player.Score.toString());
-	            _this.hiScoreGraphicsPlugin.update(_this.gameUi.currentHighScore);
+	            // this.hiScoreGraphicsPlugin.update(this.gameUi.currentHighScore);
 	            _this.gameUi.displayGameScreen(_this.controls.evaluateKeyDown, _this.controls.evaluateKeyUp);
 	            _this.player.Ship.position = _this.getInitialShipPosition();
 	            _this.engine.addShapes(_this.player.Ship.type, _this.player.Ship.objectId, _this.player.Ship.position, _this.shipLayerId);
