@@ -23,3 +23,30 @@ export function createLargeAsteroidTypeOne() {
 
     return newShape;
 }
+
+export function createLargeAsteroidTypeTwo() {
+    // 160x160
+    var newShape = new Kinetic.Line({
+        x: 200,
+        y: 200,
+        points: [
+            0, 0,
+            80, 0,
+            160, 80,
+            160, 160,
+            80, 160,
+            0, 160,
+            0, 100,
+            60, 80,
+            0, 0
+        ],
+        closed: true,
+        width: 160,
+        height: 160,
+        stroke: 'yellowgreen',
+        fill: 'transparent',
+        offset: { x: 80, y: 80 }
+    });
+
+    return newShape;
+}
