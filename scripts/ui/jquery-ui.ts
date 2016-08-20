@@ -1,13 +1,15 @@
 import {stageOptions} from '../contracts/igraphics';
+import {HighScoreClient} from './high-score-client';
 
 export interface gameUi {
     displayMainScreen(startGameFunction: () => any): void;
     displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any): void;
-    displayGameOverScreen(): void;
+    displayGameOverScreen(score: number): void;
 }
 
 export class jqueryGameUi implements gameUi {
     private options: stageOptions;
+    private scoreClient: HighScoreClient;
 
     private documentRoot = $(':root');
     private root: JQuery;
@@ -16,7 +18,8 @@ export class jqueryGameUi implements gameUi {
     private btnStart: JQuery;
     private btnMenu: JQuery;
 
-    constructor(options: stageOptions) {
+    constructor(options: stageOptions, scoreClient: HighScoreClient) {
+        this.scoreClient = scoreClient;
         this.options = options;
         this.initializeElements();
     }
@@ -75,8 +78,11 @@ export class jqueryGameUi implements gameUi {
         });
     }
 
-    public displayGameOverScreen() {
+    public displayGameOverScreen(score: number) {
         this.documentRoot.off('keydown');
         this.documentRoot.off('keyup');
+
+        this.scoreClient.submitScore(score);
+        this.scoreClient.getScoreList(5);
     }
 }

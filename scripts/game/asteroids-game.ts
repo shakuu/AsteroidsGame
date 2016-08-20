@@ -384,16 +384,16 @@ export class asteroidsGame {
         this.asteroids = [];
         this.shots = [];
 
-        this.controls.resetState();
-        this.asteroidSpawnInterval = 20000;
-
-        this.player.Ship.clearAllMovement();
-        this.player.gameOver = false;
-        this.player.Score = 0;
-
-        this.gameUi.displayGameOverScreen();
+        this.gameUi.displayGameOverScreen(this.player.Score);
         this.gameUi.displayMainScreen(this.Start);
         this.engine.removeAllGameShapes();
         this.engine.clear();
+
+        this.controls.resetState();
+        this.asteroidSpawnInterval = 20000;
+        
+        this.player.Ship.clearAllMovement();
+        this.player.gameOver = false;
+        this.player.Score = 0;
     }
 }

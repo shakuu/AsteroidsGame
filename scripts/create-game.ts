@@ -9,6 +9,7 @@ import {shapesFactory} from './graphics/shapes-factory'
 import {asteroidsGame, asteroidsGameCommands} from './game/asteroids-game';
 import {IControls, keyboardControls} from './game/controls';
 import {jqueryGameUi} from './ui/jquery-ui';
+import {HighScoreLocalStorage} from './ui/high-score-localstorage';
 
 export function createGame() {
     var factory = new objectFactory()
@@ -19,15 +20,16 @@ export function createGame() {
         height: window.innerHeight
     };
 
+    var scoreClient = new HighScoreLocalStorage();
     var gameCommands = new asteroidsGameCommands();
-    var gameUi = new jqueryGameUi(stageOptions);
+    var gameUi = new jqueryGameUi(stageOptions, scoreClient);
     var engine = new kineticGraphicsEngine(stageOptions, 3, shapeFactory);
     var ship = factory.createObject(gameCommands.createShip);
     var playerOne = new player(ship as spaceShip, 'player one');
     var controls = new keyboardControls();
 
     var game = new asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
-    
+
     var scoreGraphicsPlugin = new ScoreTrackerKineticGraphicsPlugin('SCORE: ', 8, { x: 10, y: 10 });
     game.addScoreGraphicsPlugin(scoreGraphicsPlugin);
 
