@@ -1,7 +1,7 @@
 import {shapesFactory as interfaceFactory} from '../contracts/shapes-factory';
 import {createLargeAsteroidTypeOne, createLargeAsteroidTypeTwo} from './asteroids-library/large-asteroids';
 import {createMediumAsteroidTypeOne, createMediumAsteroidTypeTwo, createMediumAsteroidTypeThree} from './asteroids-library/medium-asteroids';
-import {createSmallAsteroidTypeOne} from './asteroids-library/small-asteroids';
+import {createSmallAsteroidTypeOne, createSmallAsteroidTypeTwo} from './asteroids-library/small-asteroids';
 
 export class shapesFactory implements interfaceFactory {
 
@@ -77,11 +77,14 @@ function createMediumAsteroid(): Kinetic.IShape {
 
 function createSmallAsteroid(): Kinetic.IShape {
     var newShape: Kinetic.IShape,
-        typeNr = getRandomInt(1, 1);
+        typeNr = getRandomInt(1, 2);
 
     switch (typeNr) {
         case 1:
             newShape = createSmallAsteroidTypeOne();
+            break;
+        case 2:
+            newShape = createSmallAsteroidTypeTwo();
             break;
         default:
             newShape = createSmallAsteroidTypeOne();
