@@ -65,6 +65,7 @@
 	var asteroids_game_1 = __webpack_require__(14);
 	var controls_1 = __webpack_require__(15);
 	var jquery_ui_1 = __webpack_require__(16);
+	var high_score_localstorage_1 = __webpack_require__(17);
 	function createGame() {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
@@ -73,8 +74,9 @@
 	        width: window.innerWidth,
 	        height: window.innerHeight
 	    };
+	    var scoreClient = new high_score_localstorage_1.HighScoreLocalStorage();
 	    var gameCommands = new asteroids_game_1.asteroidsGameCommands();
-	    var gameUi = new jquery_ui_1.jqueryGameUi(stageOptions);
+	    var gameUi = new jquery_ui_1.jqueryGameUi(stageOptions, scoreClient);
 	    var engine = new engine_1.kineticGraphicsEngine(stageOptions, 3, shapeFactory);
 	    var ship = factory.createObject(gameCommands.createShip);
 	    var playerOne = new player_1.player(ship, 'player one');
@@ -1203,15 +1205,15 @@
 	    asteroidsGame.prototype.gameOver = function () {
 	        this.asteroids = [];
 	        this.shots = [];
+	        this.gameUi.displayGameOverScreen(this.player.Score);
+	        this.gameUi.displayMainScreen(this.Start);
+	        this.engine.removeAllGameShapes();
+	        this.engine.clear();
 	        this.controls.resetState();
 	        this.asteroidSpawnInterval = 20000;
 	        this.player.Ship.clearAllMovement();
 	        this.player.gameOver = false;
 	        this.player.Score = 0;
-	        this.gameUi.displayGameOverScreen();
-	        this.gameUi.displayMainScreen(this.Start);
-	        this.engine.removeAllGameShapes();
-	        this.engine.clear();
 	    };
 	    return asteroidsGame;
 	}());
@@ -1282,8 +1284,9 @@
 
 	"use strict";
 	var jqueryGameUi = (function () {
-	    function jqueryGameUi(options) {
+	    function jqueryGameUi(options, scoreClient) {
 	        this.documentRoot = $(':root');
+	        this.scoreClient = scoreClient;
 	        this.options = options;
 	        this.initializeElements();
 	    }
@@ -1332,13 +1335,52 @@
 	            keyUpHandler(event.keyCode);
 	        });
 	    };
-	    jqueryGameUi.prototype.displayGameOverScreen = function () {
+	    jqueryGameUi.prototype.displayGameOverScreen = function (score) {
 	        this.documentRoot.off('keydown');
 	        this.documentRoot.off('keyup');
+	        this.scoreClient.submitScore(score);
+	        this.scoreClient.getScoreList(5);
 	    };
 	    return jqueryGameUi;
 	}());
 	exports.jqueryGameUi = jqueryGameUi;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var HighScoreLocalStorage = (function () {
+	    function HighScoreLocalStorage() {
+	    }
+	    HighScoreLocalStorage.prototype.submitScore = function (score) {
+	        var key = this.evaluateScoreRank(score);
+	        if (key) {
+	            localStorage.setItem(key, score.toString());
+	        }
+	        return true;
+	    };
+	    HighScoreLocalStorage.prototype.getScoreList = function (number) {
+	        for (var key in localStorage) {
+	            console.log(localStorage[key]);
+	        }
+	        return {};
+	    };
+	    HighScoreLocalStorage.prototype.evaluateScoreRank = function (score) {
+	        if (!localStorage[1]) {
+	            return 1;
+	        }
+	        for (var key in localStorage) {
+	            if (+localStorage[key] < +score) {
+	                return key;
+	            }
+	        }
+	        return null;
+	    };
+	    return HighScoreLocalStorage;
+	}());
+	exports.HighScoreLocalStorage = HighScoreLocalStorage;
 
 
 /***/ }
