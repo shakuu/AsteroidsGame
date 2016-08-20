@@ -5,6 +5,8 @@ export interface gameUi {
     displayMainScreen(startGameFunction: () => any): void;
     displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any): void;
     displayGameOverScreen(score: number): void;
+
+    currentHighScore: string;
 }
 
 export class jqueryGameUi implements gameUi {
@@ -22,6 +24,10 @@ export class jqueryGameUi implements gameUi {
         this.scoreClient = scoreClient;
         this.options = options;
         this.initializeElements();
+    }
+
+    get currentHighScore() {
+        return this.scoreClient.getScoreList(5).toString();
     }
 
     private initializeElements(): void {
@@ -52,7 +58,7 @@ export class jqueryGameUi implements gameUi {
             }).on('mouseleave', '.button', function (event) {
                 $(event.target).removeClass('hovered');
             });
-            
+
         this.btnStart.on('click', function () {
             $(this).removeClass('hovered');
             startGameFunction();

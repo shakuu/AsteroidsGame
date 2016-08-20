@@ -10,11 +10,8 @@ export class HighScoreLocalStorage implements HighScoreClient {
         return true;
     }
 
-    getScoreList(number: number): {} {
-        for(var key in localStorage){
-            console.log(localStorage[key]);
-        }
-        return {};
+    getScoreList(number: number) {
+        return localStorage[1];
     }
 
     private evaluateScoreRank(score: number): any {
