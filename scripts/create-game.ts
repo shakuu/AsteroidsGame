@@ -2,6 +2,7 @@ import {asteroid} from './models/asteroids';
 import {spaceShip} from './models/space-ship';
 import {kineticGraphicsEngine} from './graphics/engine';
 import {graphics} from './contracts/igraphics';
+import {ScoreTrackerKineticGraphicsPlugin} from './graphics/engine-plugins';
 import {objectFactory} from './objects-factory/objects-factory';
 import {player} from './models/player';
 import {shapesFactory} from './graphics/shapes-factory'
@@ -14,12 +15,11 @@ export function createGame() {
     var shapeFactory = new shapesFactory();
     var stageOptions = {
         container: 'game',
-        width:  window.innerWidth,
-        height:  window.innerHeight
+        width: window.innerWidth,
+        height: window.innerHeight
     };
 
     var gameCommands = new asteroidsGameCommands();
-
     var gameUi = new jqueryGameUi(stageOptions);
     var engine = new kineticGraphicsEngine(stageOptions, 3, shapeFactory);
     var ship = factory.createObject(gameCommands.createShip);
@@ -27,6 +27,10 @@ export function createGame() {
     var controls = new keyboardControls();
 
     var game = new asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
+    
+    var scoreGraphicsPlugin = new ScoreTrackerKineticGraphicsPlugin('SCORE: ', 8, { x: 10, y: 10 });
+    game.addScoreGraphicsPlugin(scoreGraphicsPlugin);
+
     console.log('it works');
 
     return game;

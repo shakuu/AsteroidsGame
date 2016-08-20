@@ -58,12 +58,13 @@
 
 	"use strict";
 	var engine_1 = __webpack_require__(2);
-	var objects_factory_1 = __webpack_require__(3);
-	var player_1 = __webpack_require__(8);
-	var shapes_factory_1 = __webpack_require__(9);
-	var asteroids_game_1 = __webpack_require__(13);
-	var controls_1 = __webpack_require__(14);
-	var jquery_ui_1 = __webpack_require__(15);
+	var engine_plugins_1 = __webpack_require__(3);
+	var objects_factory_1 = __webpack_require__(4);
+	var player_1 = __webpack_require__(9);
+	var shapes_factory_1 = __webpack_require__(10);
+	var asteroids_game_1 = __webpack_require__(14);
+	var controls_1 = __webpack_require__(15);
+	var jquery_ui_1 = __webpack_require__(16);
 	function createGame() {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
@@ -79,6 +80,8 @@
 	    var playerOne = new player_1.player(ship, 'player one');
 	    var controls = new controls_1.keyboardControls();
 	    var game = new asteroids_game_1.asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
+	    var scoreGraphicsPlugin = new engine_plugins_1.ScoreTrackerKineticGraphicsPlugin('SCORE: ', 8, { x: 10, y: 10 });
+	    game.addScoreGraphicsPlugin(scoreGraphicsPlugin);
 	    console.log('it works');
 	    return game;
 	}
@@ -208,8 +211,14 @@
 	        for (var i = 0; i < this.layers.length; i += 1) {
 	            this.layers[i].draw();
 	        }
+	        for (var i_1 = 0; i_1 < this.plugins.length; i_1 += 1) {
+	            this.plugins[i_1].draw();
+	        }
 	    };
-	    kineticGraphicsEngine.prototype.destroy = function () {
+	    kineticGraphicsEngine.prototype.clear = function () {
+	        this.stage.clear();
+	    };
+	    kineticGraphicsEngine.prototype.removeAllGameShapes = function () {
 	        for (var i = 0; i < this.layers.length; i += 1) {
 	            this.layers[i].removeChildren();
 	            this.layers[i].clear();
@@ -223,12 +232,77 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var KineticGraphicsPlugin = (function () {
+	    function KineticGraphicsPlugin() {
+	        this.layer = new Kinetic.Layer();
+	    }
+	    Object.defineProperty(KineticGraphicsPlugin.prototype, "Layer", {
+	        get: function () {
+	            return this.layer;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    KineticGraphicsPlugin.prototype.updateText = function (content) {
+	    };
+	    KineticGraphicsPlugin.prototype.draw = function () {
+	        this.layer.draw();
+	    };
+	    return KineticGraphicsPlugin;
+	}());
+	exports.KineticGraphicsPlugin = KineticGraphicsPlugin;
+	var ScoreTrackerKineticGraphicsPlugin = (function (_super) {
+	    __extends(ScoreTrackerKineticGraphicsPlugin, _super);
+	    function ScoreTrackerKineticGraphicsPlugin(label, contentLengthInCharacters, position) {
+	        _super.call(this);
+	        this.label = label;
+	        this.contentLength = contentLengthInCharacters;
+	        this.intializeTextShape(position);
+	    }
+	    ScoreTrackerKineticGraphicsPlugin.prototype.updateText = function (content) {
+	        var len = this.contentLength - content.length;
+	        for (var i = 0; i < len; i += 1) {
+	            content = '0' + content;
+	        }
+	        this.kineticText.setText(this.label + content);
+	    };
+	    ScoreTrackerKineticGraphicsPlugin.prototype.intializeTextShape = function (position) {
+	        var filler = '';
+	        for (var i = 0; i < this.contentLength; i += 1) {
+	            filler += '0';
+	        }
+	        this.kineticText = new Kinetic.Text({
+	            x: position.x,
+	            y: position.y,
+	            height: 100,
+	            width: 300,
+	            text: this.label + filler,
+	            fill: 'yellowgreen',
+	            fontSize: 24
+	        });
+	        this.layer.add(this.kineticText);
+	    };
+	    return ScoreTrackerKineticGraphicsPlugin;
+	}(KineticGraphicsPlugin));
+	exports.ScoreTrackerKineticGraphicsPlugin = ScoreTrackerKineticGraphicsPlugin;
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var asteroids_1 = __webpack_require__(4);
-	var space_ship_1 = __webpack_require__(6);
-	var ship_attacks_1 = __webpack_require__(7);
+	var asteroids_1 = __webpack_require__(5);
+	var space_ship_1 = __webpack_require__(7);
+	var ship_attacks_1 = __webpack_require__(8);
 	var objectFactory = (function () {
 	    function objectFactory() {
 	        this.currentId = 0;
@@ -267,7 +341,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -276,7 +350,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var space_object_1 = __webpack_require__(5);
+	var space_object_1 = __webpack_require__(6);
 	var asteroid = (function (_super) {
 	    __extends(asteroid, _super);
 	    function asteroid(id, size, pointsReward, type) {
@@ -334,7 +408,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -370,7 +444,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -379,7 +453,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var space_object_1 = __webpack_require__(5);
+	var space_object_1 = __webpack_require__(6);
 	var spaceShip = (function (_super) {
 	    __extends(spaceShip, _super);
 	    function spaceShip(id) {
@@ -465,7 +539,7 @@
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -474,7 +548,7 @@
 	    function __() { this.constructor = d; }
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
-	var space_object_1 = __webpack_require__(5);
+	var space_object_1 = __webpack_require__(6);
 	var attack = (function (_super) {
 	    __extends(attack, _super);
 	    // private forwardMotion: forwardMotion;
@@ -496,7 +570,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -537,13 +611,13 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var large_asteroids_1 = __webpack_require__(10);
-	var medium_asteroids_1 = __webpack_require__(11);
-	var small_asteroids_1 = __webpack_require__(12);
+	var large_asteroids_1 = __webpack_require__(11);
+	var medium_asteroids_1 = __webpack_require__(12);
+	var small_asteroids_1 = __webpack_require__(13);
 	var shapesFactory = (function () {
 	    function shapesFactory() {
 	    }
@@ -644,7 +718,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -702,7 +776,7 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -733,7 +807,7 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -762,7 +836,7 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -796,6 +870,7 @@
 	        this.asteroidSpawnIntervalDecreasingStep = 2500;
 	        this.lastCollisionDetectionTimeStamp = 0;
 	        this.Start = function () {
+	            _this.scoreGraphicsPlugin.updateText(_this.player.Score.toString());
 	            _this.gameUi.displayGameScreen(_this.controls.evaluateKeyDown, _this.controls.evaluateKeyUp);
 	            _this.player.Ship.position = _this.getInitialShipPosition();
 	            _this.engine.addShapes(_this.player.Ship.type, _this.player.Ship.objectId, _this.player.Ship.position, _this.shipLayerId);
@@ -850,6 +925,10 @@
 	        this.commands = commands;
 	        this.gameUi = gameUi;
 	    }
+	    asteroidsGame.prototype.addScoreGraphicsPlugin = function (plugin) {
+	        this.scoreGraphicsPlugin = plugin;
+	        this.engine.addPlugin(plugin);
+	    };
 	    Object.defineProperty(asteroidsGame.prototype, "Controls", {
 	        get: function () {
 	            return this.controls;
@@ -858,10 +937,9 @@
 	        configurable: true
 	    });
 	    asteroidsGame.prototype.displayMainScreen = function () {
+	        this.engine.clear();
 	        this.player.gameOver = false;
 	        this.gameUi.displayMainScreen(this.Start);
-	    };
-	    asteroidsGame.prototype.onStartBtnClick = function () {
 	    };
 	    asteroidsGame.prototype.getInitialShipPosition = function () {
 	        var stage = this.engine.getStageOptions();
@@ -929,6 +1007,7 @@
 	                var collidingShapeObjectId = +isColliding.getId();
 	                this.removeShapeWithObjectId(collidingShapeObjectId);
 	                this.player.Score += this.lastKilledAsteroidReward;
+	                this.scoreGraphicsPlugin.updateText(this.player.Score.toString());
 	                var position = isColliding.getPosition();
 	                var newAsteroidsOptions = this.getCreateNewAsteroidsAfterKillOptions(this.lastKilledAsteroidSize);
 	                for (var j = 0; j < newAsteroidsOptions.numberOfNewAsteroids; j += 1) {
@@ -1040,7 +1119,8 @@
 	        this.player.Score = 0;
 	        this.gameUi.displayGameOverScreen();
 	        this.gameUi.displayMainScreen(this.Start);
-	        this.engine.destroy();
+	        this.engine.removeAllGameShapes();
+	        this.engine.clear();
 	    };
 	    return asteroidsGame;
 	}());
@@ -1048,7 +1128,7 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -1106,7 +1186,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	"use strict";

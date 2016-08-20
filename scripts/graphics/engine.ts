@@ -47,7 +47,7 @@ export class kineticGraphicsEngine implements graphics {
         return this.stageOptions;
     }
 
-    public addPlugin(plugin: KineticGraphicsPlugin){
+    public addPlugin(plugin: KineticGraphicsPlugin) {
         this.plugins.push(plugin);
         this.stage.add(plugin.Layer);
     }
@@ -164,16 +164,24 @@ export class kineticGraphicsEngine implements graphics {
         return false;
     }
 
-    public nextFrame() {
+    public nextFrame() {    
         for (var i = 0; i < this.layers.length; i += 1) {
             this.layers[i].draw();
         }
+
+        for (let i = 0; i < this.plugins.length; i += 1) {
+            this.plugins[i].draw();
+        }
     }
 
-    public destroy() {
+    public clear(){
+        this.stage.clear();
+    }
+
+    public removeAllGameShapes() {
         for (var i = 0; i < this.layers.length; i += 1) {
             this.layers[i].removeChildren();
-            this.layers[i].clear();            
+            this.layers[i].clear();
         }
 
         this.shapes = [];

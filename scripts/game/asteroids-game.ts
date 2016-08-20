@@ -1,5 +1,5 @@
 import {player} from '../models/player';
-import {graphics, canvasPosition, stageOptions} from '../contracts/igraphics';
+import {graphics, canvasPosition, stageOptions, graphicsPlugin} from '../contracts/igraphics';
 import {objectFactory} from '../objects-factory/objects-factory';
 import {asteroid, largeAsteroid, mediumAsteroid, smallAsteroid} from '../models/asteroids';
 import {IControls, keyboardControls} from './controls'
@@ -60,6 +60,8 @@ export class asteroidsGame {
 
     private lastCollisionDetectionTimeStamp: number = 0;
 
+    private scoreGraphicsPlugin: graphicsPlugin;
+
     constructor(engine: graphics,
         player: player,
         controls: IControls,
@@ -75,20 +77,24 @@ export class asteroidsGame {
         this.gameUi = gameUi;
     }
 
+    public addScoreGraphicsPlugin(plugin: graphicsPlugin) {
+        this.scoreGraphicsPlugin = plugin;
+        this.engine.addPlugin(plugin);
+    }
+
     public get Controls() {
         return this.controls;
     }
 
     public displayMainScreen() {
+        this.engine.clear();
         this.player.gameOver = false;
         this.gameUi.displayMainScreen(this.Start);
     }
 
-    public onStartBtnClick() {
-
-    }
-
     public Start = () => {
+        this.scoreGraphicsPlugin.updateText(this.player.Score.toString());
+
         this.gameUi.displayGameScreen(this.controls.evaluateKeyDown, this.controls.evaluateKeyUp);
 
         this.player.Ship.position = this.getInitialShipPosition();
@@ -240,6 +246,7 @@ export class asteroidsGame {
                 this.removeShapeWithObjectId(collidingShapeObjectId);
 
                 this.player.Score += this.lastKilledAsteroidReward;
+                this.scoreGraphicsPlugin.updateText(this.player.Score.toString());
 
                 var position = isColliding.getPosition();
                 var newAsteroidsOptions = this.getCreateNewAsteroidsAfterKillOptions(this.lastKilledAsteroidSize);
@@ -386,6 +393,7 @@ export class asteroidsGame {
 
         this.gameUi.displayGameOverScreen();
         this.gameUi.displayMainScreen(this.Start);
-        this.engine.destroy();
+        this.engine.removeAllGameShapes();
+        this.engine.clear();
     }
 }

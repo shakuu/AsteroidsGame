@@ -1,5 +1,5 @@
 export interface graphics {
-    addShapes(type: string, id: number,position: canvasPosition, layerId: number);
+    addShapes(type: string, id: number, position: canvasPosition, layerId: number);
     destroyShape(id: number);
     rotateShape(id: number, degree: number): number;
     moveShape(id: number, position: canvasPosition);
@@ -7,13 +7,15 @@ export interface graphics {
     detectCollision(shapeId: number, layer: number): Kinetic.IShape;
     getStageOptions(): stageOptions;
     nextFrame(): void;
-    destroy();
+    clear();
+    removeAllGameShapes();
 
     addPlugin(plugin: graphicsPlugin): void;
 }
 
-export interface graphicsPlugin{
+export interface graphicsPlugin {
     draw();
+    updateText(content: string);
 }
 
 export interface canvasPosition {
