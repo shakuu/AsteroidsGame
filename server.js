@@ -31,7 +31,7 @@ app.get('/score/:score/name/:name', function (req, res) {
 });
 
 app.get('/get/hiscore', function (req, res) {
-    if (highScore[0].score) {
+    if (highScore[0]) {
         res.send(highScore[0].score.toString());
     } else {
         res.send('0');
@@ -39,20 +39,22 @@ app.get('/get/hiscore', function (req, res) {
 });
 
 app.get('/get/top/:amount', function (req, res) {
-    var result = []; //highScore.slice(+req.paras.amount);
-
-    if (highScore.length === 0) {
-        result.push({
-            score: '0',
-            name: 'n / a'
-        });
-    }
+    var result = [];
 
     for (var i = 0, len = +req.params.amount; i < len; i += 1) {
         if (highScore[i]) {
             result.push(highScore[i]);
         } else {
             break;
+        }
+    }
+
+    if (result.length < 3) {
+        for (let i = result.length; i < 3; i += 1) {
+            result.push({
+                score: '0',
+                name: 'NON'
+            });
         }
     }
 

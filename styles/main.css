@@ -45,6 +45,7 @@ body .inactive-background .high-score-list {
   color: #9acd32;
   font-size: 24px;
   text-align: center;
+  font-family: consolas;
 }
 body .inactive-background .high-score-list .high-score-item {
   margin: 5px;

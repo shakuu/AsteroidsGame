@@ -1307,7 +1307,7 @@
 	    function jqueryGameUi(options, scoreClient) {
 	        var _this = this;
 	        this.documentRoot = $(':root');
-	        this.hiScoreStringLenght = 32;
+	        this.hiScoreStringLenght = 27;
 	        this.displayTopScores = function () {
 	            _this.btnMenu.hide();
 	            _this.btnScore.removeClass('hovered');

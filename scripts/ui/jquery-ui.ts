@@ -22,7 +22,7 @@ export class jqueryGameUi implements gameUi {
     private btnMenu: JQuery;
 
     private hiScoreBackground: JQuery;
-    private hiScoreStringLenght: number = 32;
+    private hiScoreStringLenght: number = 27;
 
     constructor(options: stageOptions, scoreClient: HighScoreClient) {
         this.scoreClient = scoreClient;
