@@ -12,6 +12,10 @@
   ],
   "author": "shakuu",
   "license": "ISC",
+  "engines": {
+    "node": "6.2.1",
+    "npm": "3.9.3"
+  },
   "dependencies": {
     "express": "^4.14.0",
     "ts-loader": "^0.8.2"
