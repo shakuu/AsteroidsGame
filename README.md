@@ -1,4 +1,5 @@
 # [Asteroids](https://shakuu.github.io/AsteroidsGame/)
+## With localStorage
 
 ## Possible features
 
