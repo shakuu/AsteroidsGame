@@ -1307,10 +1307,11 @@
 	    function jqueryGameUi(options, scoreClient) {
 	        var _this = this;
 	        this.documentRoot = $(':root');
+	        this.hiScoreStringLenght = 32;
 	        this.displayTopScores = function () {
 	            _this.btnMenu.hide();
 	            _this.btnScore.removeClass('hovered');
-	            _this.scoreClient.getScoreList(5, _this.populateHighScoreList);
+	            _this.scoreClient.getScoreList(3, _this.populateHighScoreList);
 	        };
 	        this.populateHighScoreList = function (data) {
 	            _this.hiScoreBackground = $('<div />')
@@ -1320,19 +1321,22 @@
 	            var container = $('<div />')
 	                .addClass('high-score-list')
 	                .appendTo(_this.hiScoreBackground);
-	            var itemName = $('<span />')
-	                .addClass('item-name');
 	            var itemScore = $('<span />')
 	                .addClass('item-score');
 	            var item = $('<div />')
 	                .addClass('high-score-item')
-	                .append(itemName)
 	                .append(itemScore);
+	            var newHiScoreString = '';
 	            for (var i in data) {
-	                itemName.html(data[i].name);
-	                itemScore.html(data[i].score);
+	                newHiScoreString = _this.generateHiScoreString(data[i].name, data[i].score.toString());
+	                itemScore.html(newHiScoreString);
 	                container.append(item.clone());
 	            }
+	            container
+	                .children('.high-score-item')
+	                .first().addClass('first')
+	                .next().addClass('second')
+	                .next().addClass('third');
 	        };
 	        this.restoreStateBeforeHiScoreMenu = function (event) {
 	            _this.btnMenu.show();
@@ -1406,6 +1410,20 @@
 	        this.documentRoot.off('keydown');
 	        this.documentRoot.off('keyup');
 	        this.scoreClient.submitScore(score, name);
+	    };
+	    jqueryGameUi.prototype.generateHiScoreString = function (name, score) {
+	        var hiScoreString = name;
+	        var currentStringLenght = hiScoreString.length;
+	        for (var i = currentStringLenght; i < this.hiScoreStringLenght - 8; i += 1) {
+	            hiScoreString += '.';
+	        }
+	        var scoreStringLength = score.length;
+	        currentStringLenght = hiScoreString.length;
+	        for (var i = currentStringLenght; i < this.hiScoreStringLenght - scoreStringLength; i += 1) {
+	            hiScoreString += '0';
+	        }
+	        hiScoreString += score;
+	        return hiScoreString;
 	    };
 	    return jqueryGameUi;
 	}());

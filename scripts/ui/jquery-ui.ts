@@ -22,6 +22,7 @@ export class jqueryGameUi implements gameUi {
     private btnMenu: JQuery;
 
     private hiScoreBackground: JQuery;
+    private hiScoreStringLenght: number = 32;
 
     constructor(options: stageOptions, scoreClient: HighScoreClient) {
         this.scoreClient = scoreClient;
@@ -108,7 +109,7 @@ export class jqueryGameUi implements gameUi {
     private displayTopScores = () => {
         this.btnMenu.hide();
         this.btnScore.removeClass('hovered');
-        this.scoreClient.getScoreList(5, this.populateHighScoreList)
+        this.scoreClient.getScoreList(3, this.populateHighScoreList)
     }
 
     private populateHighScoreList = (data) => {
@@ -121,22 +122,43 @@ export class jqueryGameUi implements gameUi {
             .addClass('high-score-list')
             .appendTo(this.hiScoreBackground);
 
-        var itemName = $('<span />')
-            .addClass('item-name');
-
         var itemScore = $('<span />')
             .addClass('item-score');
 
         var item = $('<div />')
             .addClass('high-score-item')
-            .append(itemName)
             .append(itemScore);
 
+        var newHiScoreString = '';
         for (var i in data) {
-            itemName.html(data[i].name);
-            itemScore.html(data[i].score);
+            newHiScoreString = this.generateHiScoreString(data[i].name, data[i].score.toString());
+            itemScore.html(newHiScoreString);
             container.append(item.clone());
         }
+
+        container
+            .children('.high-score-item')
+            .first().addClass('first')
+            .next().addClass('second')
+            .next().addClass('third');
+    }
+
+    private generateHiScoreString(name: string, score: string): string {
+        var hiScoreString: string = name;
+
+        var currentStringLenght = hiScoreString.length;
+        for (let i = currentStringLenght; i < this.hiScoreStringLenght - 8; i += 1) {
+            hiScoreString += '.';
+        }
+
+        var scoreStringLength = score.length;
+        currentStringLenght = hiScoreString.length;
+        for (let i = currentStringLenght; i < this.hiScoreStringLenght - scoreStringLength; i += 1) {
+            hiScoreString += '0';
+        }
+
+        hiScoreString += score;
+        return hiScoreString;
     }
 
     private restoreStateBeforeHiScoreMenu = (event) => {

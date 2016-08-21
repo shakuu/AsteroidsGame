@@ -34,7 +34,6 @@ body .inactive-background {
   width: 100%;
   height: 100%;
   z-index: 100;
-  background-color: rgba(154,205,50,0.15);
   display: flex;
   align-content: center;
 }
@@ -45,4 +44,17 @@ body .inactive-background .high-score-list {
   height: 30%;
   color: #9acd32;
   font-size: 24px;
+  text-align: center;
+}
+body .inactive-background .high-score-list .high-score-item {
+  margin: 5px;
+}
+body .inactive-background .high-score-list .first {
+  color: #ffd700;
+}
+body .inactive-background .high-score-list .second {
+  color: #c0c0c0;
+}
+body .inactive-background .high-score-list .third {
+  color: #8c7853;
 }
