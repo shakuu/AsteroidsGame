@@ -15,6 +15,7 @@ export class jqueryGameUi implements gameUi {
 
     private documentRoot = $(':root');
     private root: JQuery;
+    private logo: JQuery;
 
     private kineticStage: JQuery;
     private btnStart: JQuery;
@@ -24,10 +25,11 @@ export class jqueryGameUi implements gameUi {
     private hiScoreBackground: JQuery;
     private hiScoreStringLenght: number = 27;
 
-    constructor(options: stageOptions, scoreClient: HighScoreClient) {
+    constructor(options: stageOptions, scoreClient: HighScoreClient, logo: JQuery) {
         this.scoreClient = scoreClient;
         this.options = options;
         this.initializeElements();
+        this.logo = logo;
     }
 
     get currentHighScore() {
@@ -63,6 +65,8 @@ export class jqueryGameUi implements gameUi {
     public displayMainScreen(startGameFunction: () => any) {
         this.kineticStage.hide();
 
+        this.logo.appendTo(this.root);
+
         this.btnMenu
             .appendTo(this.root)
             .on('mouseenter', '.button', function (event) {
@@ -80,6 +84,8 @@ export class jqueryGameUi implements gameUi {
     }
 
     public displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any) {
+        this.logo.remove();
+
         this.btnMenu
             .off('mouseenter')
             .off('mouseleave')

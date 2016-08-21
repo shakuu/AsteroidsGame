@@ -1,7 +1,10 @@
 import { createGame } from './create-game';
 
 $(function () {
+    var logoContainer = initializeLogo();
+
     var nameInput = $('<input />')
+        .attr('maxlength', '3')
         .addClass('name-input');
 
     var nameLableText = $('<span />')
@@ -29,7 +32,7 @@ $(function () {
 
     btnGo.on('click', function () {
         var playerName = getPlayerName();
-        var asteroids = createGame(playerName);
+        var asteroids = createGame(playerName, logoContainer);
         nameInputContainer.remove();
         asteroids.displayMainScreen();
     });
@@ -58,6 +61,45 @@ $(function () {
         }
 
         return inputText;
+    }
+
+    function initializeLogo(): JQuery {
+        var links = [
+            { name: 'GitHub Repo', url: 'https://github.com/shakuu/AsteroidsGame' },
+            { name: 'TypeScript', url: 'http://www.typescriptlang.org/' },
+            { name: 'Kinetic.js', url: 'http://kineticjs.com/' },
+            { name: 'Express.js', url: 'http://expressjs.com/' },
+            { name: 'jQuery', url: 'http://jquery.com/' }
+        ];
+
+        var linkTemplate = $('<li />')
+            .addClass('link-item');
+
+        var linkTemplateAnchor = $('<a />')
+            .appendTo(linkTemplate);
+
+        var linksList = $('<ul />')
+            .addClass('links-list');
+
+        for (let i = 0; i < links.length; i += 1) {
+            linkTemplateAnchor
+                .html(links[i].name)
+                .attr('href', links[i].url);
+
+            linksList.append(linkTemplate.clone());
+        }
+
+        var heading = $('<h1 />')
+            .addClass('logo-heading')
+            .html('asteroids');
+
+        var logoContainer = $('<div />')
+            .addClass('logo-container')
+            .append(heading)
+            .append(linksList)
+            .appendTo('#game');
+
+        return logoContainer;
     }
 });
 

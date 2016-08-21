@@ -13,6 +13,35 @@ body #game {
   display: flex;
   align-content: center;
 }
+body #game .logo-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: #9acd32;
+  width: 100%;
+  height: 10%;
+  margin: auto auto;
+  text-align: center;
+}
+body #game .logo-container .logo-heading {
+  text-transform: uppercase;
+  font-size: 40px;
+}
+body #game .logo-container .links-list {
+  list-style: none;
+  margin: -20px;
+}
+body #game .logo-container .links-list .link-item {
+  padding: 0px 10px;
+  display: inline-block;
+}
+body #game .logo-container .links-list .link-item a {
+  text-decoration: none;
+  color: rgba(154,205,50,0.77);
+}
+body #game .logo-container .links-list .link-item a:hover {
+  text-decoration: underline;
+}
 body #game .name-input-container {
   color: #9acd32;
   width: 30%;
@@ -37,10 +66,14 @@ body #game .name-input-container .name-label .name-input {
   border-color: #9acd32;
   font-size: 24px;
   text-align: center;
+  width: 200px;
 }
 body #game .name-input-container .btn-go {
   display: block;
   padding: 10px 15px;
+}
+body #game .name-input-container .btn-go:hover {
+  text-decoration: underline;
 }
 body #game .name-input-container .inactive {
   display: none;

@@ -47,7 +47,9 @@
 	"use strict";
 	var create_game_1 = __webpack_require__(1);
 	$(function () {
+	    var logoContainer = initializeLogo();
 	    var nameInput = $('<input />')
+	        .attr('maxlength', '3')
 	        .addClass('name-input');
 	    var nameLableText = $('<span />')
 	        .addClass('label-text-span')
@@ -68,7 +70,7 @@
 	    nameInput.on('input', activateBtnGo);
 	    btnGo.on('click', function () {
 	        var playerName = getPlayerName();
-	        var asteroids = create_game_1.createGame(playerName);
+	        var asteroids = create_game_1.createGame(playerName, logoContainer);
 	        nameInputContainer.remove();
 	        asteroids.displayMainScreen();
 	    });
@@ -93,6 +95,36 @@
 	        }
 	        return inputText;
 	    }
+	    function initializeLogo() {
+	        var links = [
+	            { name: 'GitHub Repo', url: 'https://github.com/shakuu/AsteroidsGame' },
+	            { name: 'TypeScript', url: 'http://www.typescriptlang.org/' },
+	            { name: 'Kinetic.js', url: 'http://kineticjs.com/' },
+	            { name: 'Express.js', url: 'http://expressjs.com/' },
+	            { name: 'jQuery', url: 'http://jquery.com/' }
+	        ];
+	        var linkTemplate = $('<li />')
+	            .addClass('link-item');
+	        var linkTemplateAnchor = $('<a />')
+	            .appendTo(linkTemplate);
+	        var linksList = $('<ul />')
+	            .addClass('links-list');
+	        for (var i = 0; i < links.length; i += 1) {
+	            linkTemplateAnchor
+	                .html(links[i].name)
+	                .attr('href', links[i].url);
+	            linksList.append(linkTemplate.clone());
+	        }
+	        var heading = $('<h1 />')
+	            .addClass('logo-heading')
+	            .html('asteroids');
+	        var logoContainer = $('<div />')
+	            .addClass('logo-container')
+	            .append(heading)
+	            .append(linksList)
+	            .appendTo('#game');
+	        return logoContainer;
+	    }
 	});
 
 
@@ -110,7 +142,7 @@
 	var controls_1 = __webpack_require__(15);
 	var jquery_ui_1 = __webpack_require__(16);
 	var high_score_client_1 = __webpack_require__(17);
-	function createGame(playerName) {
+	function createGame(playerName, logo) {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
 	    var stageOptions = {
@@ -121,7 +153,7 @@
 	    // var scoreClient = new HighScoreLocalStorage();
 	    var scoreClient = new high_score_client_1.MyServerHighScoreClient();
 	    var gameCommands = new asteroids_game_1.asteroidsGameCommands();
-	    var gameUi = new jquery_ui_1.jqueryGameUi(stageOptions, scoreClient);
+	    var gameUi = new jquery_ui_1.jqueryGameUi(stageOptions, scoreClient, logo);
 	    var engine = new engine_1.kineticGraphicsEngine(stageOptions, 3, shapeFactory);
 	    var ship = factory.createObject(gameCommands.createShip);
 	    var playerOne = new player_1.player(ship, playerName);
@@ -1347,7 +1379,7 @@
 
 	"use strict";
 	var jqueryGameUi = (function () {
-	    function jqueryGameUi(options, scoreClient) {
+	    function jqueryGameUi(options, scoreClient, logo) {
 	        var _this = this;
 	        this.documentRoot = $(':root');
 	        this.hiScoreStringLenght = 27;
@@ -1388,6 +1420,7 @@
 	        this.scoreClient = scoreClient;
 	        this.options = options;
 	        this.initializeElements();
+	        this.logo = logo;
 	    }
 	    Object.defineProperty(jqueryGameUi.prototype, "currentHighScore", {
 	        get: function () {
@@ -1419,6 +1452,7 @@
 	    };
 	    jqueryGameUi.prototype.displayMainScreen = function (startGameFunction) {
 	        this.kineticStage.hide();
+	        this.logo.appendTo(this.root);
 	        this.btnMenu
 	            .appendTo(this.root)
 	            .on('mouseenter', '.button', function (event) {
@@ -1433,6 +1467,7 @@
 	        this.btnScore.on('click', this.displayTopScores);
 	    };
 	    jqueryGameUi.prototype.displayGameScreen = function (keyDownHandler, keyUpHandler) {
+	        this.logo.remove();
 	        this.btnMenu
 	            .off('mouseenter')
 	            .off('mouseleave')
