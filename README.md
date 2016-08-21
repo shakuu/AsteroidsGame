@@ -1,4 +1,4 @@
-# [Asteroids](https://shakuu.github.io/AsteroidsGame/)
+# [Asteroids](https://asteroids-game.herokuapp.com/)
 ## With express.js server
 
 ## Possible features
