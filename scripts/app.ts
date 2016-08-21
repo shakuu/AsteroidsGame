@@ -4,9 +4,14 @@ $(function () {
     var nameInput = $('<input />')
         .addClass('name-input');
 
+    var nameLableText = $('<span />')
+        .addClass('label-text-span')
+        .html('ID yourself, pilot!');
+
+
     var nameLabel = $('<label />')
         .addClass('name-label')
-        .html('ID yourself, pilot!')
+        .append(nameLableText)
         .append(nameInput);
 
     var btnGo = $('<a />')
@@ -25,7 +30,7 @@ $(function () {
     btnGo.on('click', function () {
         var playerName = getPlayerName();
         var asteroids = createGame(playerName);
-        nameInputContainer.remove();        
+        nameInputContainer.remove();
         asteroids.displayMainScreen();
     });
 
