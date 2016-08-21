@@ -47,8 +47,49 @@
 	"use strict";
 	var create_game_1 = __webpack_require__(1);
 	$(function () {
-	    var asteroids = create_game_1.createGame();
-	    asteroids.displayMainScreen();
+	    var nameInput = $('<input />')
+	        .addClass('name-input');
+	    var nameLabel = $('<label />')
+	        .addClass('name-label')
+	        .html('ID yourself, pilot!')
+	        .append(nameInput);
+	    var btnGo = $('<a />')
+	        .addClass('btn-go')
+	        .addClass('inactive')
+	        .html('Ready and able!');
+	    var nameInputContainer = $('<div />')
+	        .addClass('name-input-container')
+	        .append(nameLabel)
+	        .append(btnGo)
+	        .appendTo('#game');
+	    nameInput.on('input', activateBtnGo);
+	    btnGo.on('click', function () {
+	        var playerName = getPlayerName();
+	        var asteroids = create_game_1.createGame(playerName);
+	        nameInputContainer.remove();
+	        asteroids.displayMainScreen();
+	    });
+	    function activateBtnGo() {
+	        var input = $(this);
+	        if (input.val().length > 0) {
+	            btnGo.removeClass('inactive');
+	        }
+	        else {
+	            btnGo.addClass('inactive');
+	        }
+	    }
+	    function getPlayerName() {
+	        var inputText = nameInput.val();
+	        if (inputText.length < 3) {
+	            for (var i = inputText.length; i < 3; i += 1) {
+	                inputText += ' ';
+	            }
+	        }
+	        if (inputText.length > 3) {
+	            inputText = inputText.substr(0, 3);
+	        }
+	        return inputText;
+	    }
 	});
 
 
@@ -66,7 +107,7 @@
 	var controls_1 = __webpack_require__(15);
 	var jquery_ui_1 = __webpack_require__(16);
 	var high_score_client_1 = __webpack_require__(17);
-	function createGame() {
+	function createGame(playerName) {
 	    var factory = new objects_factory_1.objectFactory();
 	    var shapeFactory = new shapes_factory_1.shapesFactory();
 	    var stageOptions = {
@@ -80,14 +121,13 @@
 	    var gameUi = new jquery_ui_1.jqueryGameUi(stageOptions, scoreClient);
 	    var engine = new engine_1.kineticGraphicsEngine(stageOptions, 3, shapeFactory);
 	    var ship = factory.createObject(gameCommands.createShip);
-	    var playerOne = new player_1.player(ship, 'one');
+	    var playerOne = new player_1.player(ship, playerName);
 	    var controls = new controls_1.keyboardControls();
 	    var game = new asteroids_game_1.asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
 	    var hiScorePlugin = new engine_plugins_1.ScoreTrackerKineticGraphicsPlugin('HI-SCORE ', 8, { x: stageOptions.width - 310, y: 10 });
 	    var scoreGraphicsPlugin = new engine_plugins_1.ScoreTrackerKineticGraphicsPlugin('SCORE ', 8, { x: 10, y: 10 });
 	    game.addHiScoreGraphicsPlugin(hiScorePlugin);
 	    game.addScoreGraphicsPlugin(scoreGraphicsPlugin);
-	    console.log('it works');
 	    return game;
 	}
 	exports.createGame = createGame;

@@ -12,7 +12,7 @@ import {jqueryGameUi} from './ui/jquery-ui';
 import {HighScoreLocalStorage} from './ui/high-score-localstorage';
 import {MyServerHighScoreClient} from './ui/high-score-client';
 
-export function createGame() {
+export function createGame(playerName: string) {
     var factory = new objectFactory()
     var shapeFactory = new shapesFactory();
     var stageOptions = {
@@ -27,7 +27,7 @@ export function createGame() {
     var gameUi = new jqueryGameUi(stageOptions, scoreClient);
     var engine = new kineticGraphicsEngine(stageOptions, 3, shapeFactory);
     var ship = factory.createObject(gameCommands.createShip);
-    var playerOne = new player(ship as spaceShip, 'one');
+    var playerOne = new player(ship as spaceShip, playerName);
     var controls = new keyboardControls();
 
     var game = new asteroidsGame(engine, playerOne, controls, factory, gameCommands, gameUi);
@@ -36,8 +36,6 @@ export function createGame() {
     var scoreGraphicsPlugin = new ScoreTrackerKineticGraphicsPlugin('SCORE ', 8, { x: 10, y: 10 });
     game.addHiScoreGraphicsPlugin(hiScorePlugin);
     game.addScoreGraphicsPlugin(scoreGraphicsPlugin);
-
-    console.log('it works');
 
     return game;
 }

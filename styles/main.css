@@ -7,6 +7,11 @@ body {
 body #game {
   margin: auto;
 }
+body #game .name-input-container {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+}
 body #game .kineticjs-content {
   margin: auto;
 }
