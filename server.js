@@ -39,7 +39,24 @@ app.get('/get/hiscore', function (req, res) {
 });
 
 app.get('/get/top/:amount', function (req, res) {
-    res.send(highScore);
+    var result = []; //highScore.slice(+req.paras.amount);
+
+    if (highScore.length === 0) {
+        result.push({
+            score: '0',
+            name: 'n / a'
+        });
+    }
+
+    for (var i = 0, len = highScore.length; i < len; i += 1) {
+        if (highScore[i]) {
+            result.push(highScore[i]);
+        } else {
+            break;
+        }
+    }
+
+    res.send(result);
 });
 
 app.listen(3000, function () {

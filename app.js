@@ -1305,7 +1305,36 @@
 	"use strict";
 	var jqueryGameUi = (function () {
 	    function jqueryGameUi(options, scoreClient) {
+	        var _this = this;
 	        this.documentRoot = $(':root');
+	        this.displayTopScores = function () {
+	            _this.btnScore.removeClass('hovered');
+	            _this.scoreClient.getScoreList(5, _this.populateHighScoreList);
+	        };
+	        this.populateHighScoreList = function (data) {
+	            var background = $('<div />')
+	                .addClass('inactive-background')
+	                .appendTo('body')
+	                .on('click', function () {
+	                $(this).remove();
+	            });
+	            var container = $('<div />')
+	                .addClass('high-score-list')
+	                .appendTo(background);
+	            var itemName = $('<span />')
+	                .addClass('item-name');
+	            var itemScore = $('<span />')
+	                .addClass('item-score');
+	            var item = $('<div />')
+	                .addClass('high-score-item')
+	                .append(itemName)
+	                .append(itemScore);
+	            for (var i in data) {
+	                itemName.html(data[i].name);
+	                itemScore.html(data[i].score);
+	                container.append(item.clone());
+	            }
+	        };
 	        this.scoreClient = scoreClient;
 	        this.options = options;
 	        this.initializeElements();
@@ -1331,6 +1360,11 @@
 	            .addClass('button')
 	            .html('START')
 	            .appendTo(this.btnMenu);
+	        this.btnScore = $('<a />')
+	            .addClass('score-button')
+	            .addClass('button')
+	            .html('HI-SCORE')
+	            .appendTo(this.btnMenu);
 	    };
 	    jqueryGameUi.prototype.displayMainScreen = function (startGameFunction) {
 	        this.kineticStage.hide();
@@ -1345,6 +1379,7 @@
 	            $(this).removeClass('hovered');
 	            startGameFunction();
 	        });
+	        this.btnScore.on('click', this.displayTopScores);
 	    };
 	    jqueryGameUi.prototype.displayGameScreen = function (keyDownHandler, keyUpHandler) {
 	        this.btnMenu
@@ -1352,6 +1387,7 @@
 	            .off('mouseleave')
 	            .remove();
 	        this.btnStart.off('click');
+	        this.btnScore.off('click');
 	        this.kineticStage.show();
 	        this.documentRoot.on('keydown', function (event) {
 	            event.preventDefault();
@@ -1404,9 +1440,9 @@
 	        $.get(updateCurrentHighScoreUrl, this.assignHighScore);
 	        return false;
 	    };
-	    MyServerHighScoreClient.prototype.getScoreList = function (number) {
-	        var url = this.url + 'get/hiscore';
-	        $.get(url, this.assignHighScore);
+	    MyServerHighScoreClient.prototype.getScoreList = function (amount, callback) {
+	        var url = this.url + 'get/top/' + amount;
+	        $.get(url, callback);
 	        return '';
 	    };
 	    return MyServerHighScoreClient;

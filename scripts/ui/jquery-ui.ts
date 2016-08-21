@@ -18,6 +18,7 @@ export class jqueryGameUi implements gameUi {
 
     private kineticStage: JQuery;
     private btnStart: JQuery;
+    private btnScore: JQuery;
     private btnMenu: JQuery;
 
     constructor(options: stageOptions, scoreClient: HighScoreClient) {
@@ -46,6 +47,12 @@ export class jqueryGameUi implements gameUi {
             .addClass('button')
             .html('START')
             .appendTo(this.btnMenu);
+
+        this.btnScore = $('<a />')
+            .addClass('score-button')
+            .addClass('button')
+            .html('HI-SCORE')
+            .appendTo(this.btnMenu);
     }
 
     public displayMainScreen(startGameFunction: () => any) {
@@ -63,6 +70,8 @@ export class jqueryGameUi implements gameUi {
             $(this).removeClass('hovered');
             startGameFunction();
         });
+
+        this.btnScore.on('click', this.displayTopScores);
     }
 
     public displayGameScreen(keyDownHandler: (any) => any, keyUpHandler: (any) => any) {
@@ -71,6 +80,7 @@ export class jqueryGameUi implements gameUi {
             .off('mouseleave')
             .remove();
         this.btnStart.off('click');
+        this.btnScore.off('click');
 
         this.kineticStage.show();
 
@@ -89,5 +99,40 @@ export class jqueryGameUi implements gameUi {
         this.documentRoot.off('keyup');
 
         this.scoreClient.submitScore(score, name);
+    }
+
+    private displayTopScores = () => {
+        this.btnScore.removeClass('hovered');
+        this.scoreClient.getScoreList(5, this.populateHighScoreList)
+    }
+
+    public populateHighScoreList = (data) => {
+        var background = $('<div />')
+            .addClass('inactive-background')
+            .appendTo('body')
+            .on('click', function () {
+                $(this).remove();
+            });
+
+        var container = $('<div />')
+            .addClass('high-score-list')
+            .appendTo(background);
+
+        var itemName = $('<span />')
+            .addClass('item-name');
+
+        var itemScore = $('<span />')
+            .addClass('item-score');
+
+        var item = $('<div />')
+            .addClass('high-score-item')
+            .append(itemName)
+            .append(itemScore);
+
+        for (var i in data) {
+            itemName.html(data[i].name);
+            itemScore.html(data[i].score);
+            container.append(item.clone());
+        }
     }
 }

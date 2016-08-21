@@ -1,6 +1,6 @@
 export interface HighScoreClient {
     submitScore(score: number, name: string): boolean;
-    getScoreList(number: number);
+    getScoreList(amount: number, callback: (data) => any);
 
     currentHighScore: string;
 }
@@ -27,10 +27,9 @@ export class MyServerHighScoreClient implements HighScoreClient {
         return false;
     }
 
-    getScoreList(number: number) {
-        var url = this.url + 'get/hiscore';
-
-        $.get(url, this.assignHighScore)
+    getScoreList(amount: number, callback: (data) => any) {
+        var url = this.url + 'get/top/' + amount;
+        $.get(url, callback);
 
         return '';
     }
