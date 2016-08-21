@@ -48,7 +48,7 @@ app.get('/get/top/:amount', function (req, res) {
         });
     }
 
-    for (var i = 0, len = highScore.length; i < len; i += 1) {
+    for (var i = 0, len = +req.params.amount; i < len; i += 1) {
         if (highScore[i]) {
             result.push(highScore[i]);
         } else {

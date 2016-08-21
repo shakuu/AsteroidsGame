@@ -22,6 +22,10 @@ export class HighScoreLocalStorage implements HighScoreClient {
         return '';
     }
 
+    updateCurrentHighScore(): void {
+
+    }
+
     private evaluateScoreRank(score: number): any {
         if (!localStorage[1]) {
             return 1;

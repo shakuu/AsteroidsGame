@@ -1308,19 +1308,18 @@
 	        var _this = this;
 	        this.documentRoot = $(':root');
 	        this.displayTopScores = function () {
+	            _this.btnMenu.hide();
 	            _this.btnScore.removeClass('hovered');
 	            _this.scoreClient.getScoreList(5, _this.populateHighScoreList);
 	        };
 	        this.populateHighScoreList = function (data) {
-	            var background = $('<div />')
+	            _this.hiScoreBackground = $('<div />')
 	                .addClass('inactive-background')
 	                .appendTo('body')
-	                .on('click', function () {
-	                $(this).remove();
-	            });
+	                .on('click', _this.restoreStateBeforeHiScoreMenu);
 	            var container = $('<div />')
 	                .addClass('high-score-list')
-	                .appendTo(background);
+	                .appendTo(_this.hiScoreBackground);
 	            var itemName = $('<span />')
 	                .addClass('item-name');
 	            var itemScore = $('<span />')
@@ -1335,6 +1334,10 @@
 	                container.append(item.clone());
 	            }
 	        };
+	        this.restoreStateBeforeHiScoreMenu = function (event) {
+	            _this.btnMenu.show();
+	            _this.hiScoreBackground.off('click').remove();
+	        };
 	        this.scoreClient = scoreClient;
 	        this.options = options;
 	        this.initializeElements();
@@ -1347,6 +1350,7 @@
 	        configurable: true
 	    });
 	    jqueryGameUi.prototype.initializeElements = function () {
+	        this.scoreClient.updateCurrentHighScore();
 	        this.root = $('#' + this.options.container);
 	        this.kineticStage = this.root.children('.kineticjs-content');
 	        this.btnMenu = $('<div />')
@@ -1436,14 +1440,17 @@
 	    MyServerHighScoreClient.prototype.submitScore = function (score, name) {
 	        var submitScoreUrl = this.url + 'score/' + score.toString() + '/name/' + name;
 	        $.get(submitScoreUrl, function () { });
-	        var updateCurrentHighScoreUrl = this.url + 'get/hiscore';
-	        $.get(updateCurrentHighScoreUrl, this.assignHighScore);
+	        this.updateCurrentHighScore();
 	        return false;
 	    };
 	    MyServerHighScoreClient.prototype.getScoreList = function (amount, callback) {
 	        var url = this.url + 'get/top/' + amount;
 	        $.get(url, callback);
 	        return '';
+	    };
+	    MyServerHighScoreClient.prototype.updateCurrentHighScore = function () {
+	        var updateCurrentHighScoreUrl = this.url + 'get/hiscore';
+	        $.get(updateCurrentHighScoreUrl, this.assignHighScore);
 	    };
 	    return MyServerHighScoreClient;
 	}());

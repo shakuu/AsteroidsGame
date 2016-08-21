@@ -21,6 +21,8 @@ export class jqueryGameUi implements gameUi {
     private btnScore: JQuery;
     private btnMenu: JQuery;
 
+    private hiScoreBackground: JQuery;
+
     constructor(options: stageOptions, scoreClient: HighScoreClient) {
         this.scoreClient = scoreClient;
         this.options = options;
@@ -32,6 +34,8 @@ export class jqueryGameUi implements gameUi {
     }
 
     private initializeElements(): void {
+        this.scoreClient.updateCurrentHighScore();
+
         this.root = $('#' + this.options.container);
         this.kineticStage = this.root.children('.kineticjs-content');
 
@@ -102,21 +106,20 @@ export class jqueryGameUi implements gameUi {
     }
 
     private displayTopScores = () => {
+        this.btnMenu.hide();
         this.btnScore.removeClass('hovered');
         this.scoreClient.getScoreList(5, this.populateHighScoreList)
     }
 
-    public populateHighScoreList = (data) => {
-        var background = $('<div />')
+    private populateHighScoreList = (data) => {
+        this.hiScoreBackground = $('<div />')
             .addClass('inactive-background')
             .appendTo('body')
-            .on('click', function () {
-                $(this).remove();
-            });
+            .on('click', this.restoreStateBeforeHiScoreMenu)
 
         var container = $('<div />')
             .addClass('high-score-list')
-            .appendTo(background);
+            .appendTo(this.hiScoreBackground);
 
         var itemName = $('<span />')
             .addClass('item-name');
@@ -134,5 +137,10 @@ export class jqueryGameUi implements gameUi {
             itemScore.html(data[i].score);
             container.append(item.clone());
         }
+    }
+
+    private restoreStateBeforeHiScoreMenu = (event) => {
+        this.btnMenu.show();
+        this.hiScoreBackground.off('click').remove();
     }
 }
